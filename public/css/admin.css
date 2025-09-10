@@ -1,0 +1,175 @@
+.admin-section {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 24px;
+    margin-bottom: 24px;
+    border: 1px solid #eee;
+}
+
+.admin-section h2 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 12px;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #495057;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #2c3e50;
+    box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.btn-primary {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 10px 14px;
+    min-height: 36px;
+    min-width: 80px;
+    background-color: #2c3e50;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: #1a252f;
+}
+
+.btn-secondary {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 10px 14px;
+    min-height: 36px;
+    min-width: 80px;
+    background-color: #ffffff;
+    color: #2c3e50;
+}
+
+.btn-secondary:hover {
+    background-color: #f8f9fa;
+}
+
+.site-card-actions {
+    padding: 16px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 10px;
+}
+
+.site-card-actions button {
+    padding: 8px 14px;
+    font-size: 14px;
+    min-height: 32px;
+    border-radius: 6px;
+}
+
+.site-card-actions .edit-btn {
+    background-color: #ffffff;
+    color: #2c3e50;
+    border: 1px solid #ddd;
+}
+
+.site-card-actions .edit-btn:hover {
+    background-color: #f8f9fa;
+}
+
+.site-card-actions .delete-btn {
+    background-color: #ffffff;
+    color: #dc3545;
+    border: 1px solid #ddd;
+}
+
+.site-card-actions .delete-btn:hover {
+    background-color: #f8f9fa;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.user-info span {
+    font-weight: 600;
+    font-size: 16px;
+    color: #2c3e50;
+}
+
+.import-section {
+    margin: 20px 0;
+}
+
+.parse-result {
+    background-color: #f8f9fa;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+.parse-result ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.parse-result li {
+    padding: 6px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.parse-result li:last-child {
+    border-bottom: none;
+}
+
+#importSection {
+    margin-top: 20px;
+}

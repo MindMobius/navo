@@ -1,0 +1,529 @@
+/* Fluent UI 风格重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', 'Segoe UI Web (West European)', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', sans-serif;
+    line-height: 1.6;
+    color: #000000;
+    background: #f8f9fa;
+    font-size: 14px;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 顶栏工具 */
+.top-toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 100;
+}
+
+.site-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-right: 20px;
+}
+
+/* 页面切换滑块 */
+.page-slider {
+    display: flex;
+    background: #f1f3f4;
+    border-radius: 20px;
+    padding: 4px;
+}
+
+.page-slider-btn {
+    background: transparent;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #5f6368;
+}
+
+.page-slider-btn.active {
+    background: #ffffff;
+    color: #2c3e50;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* 用户头像按钮 */
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #2c3e50;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: auto;
+    border: none;
+    font-size: 14px;
+}
+
+.user-menu {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    width: 200px;
+    display: none;
+    z-index: 101;
+}
+
+.user-menu.show {
+    display: block;
+}
+
+.user-menu-item {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    text-align: left;
+    background: none;
+    border: none;
+    font-size: 14px;
+    color: #2c3e50;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 4px;
+}
+
+.user-menu-item:hover {
+    background: #f1f3f4;
+}
+
+/* 主要内容区域 */
+.main-content {
+    margin-top: 60px;
+    padding-top: 20px;
+}
+
+/* Fluent UI 按钮样式 */
+.btn-primary, .btn-secondary {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 8px 12px;
+    min-height: 32px;
+    min-width: 80px;
+}
+
+.btn-primary {
+    background-color: #2c3e50;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: #1a252f;
+}
+
+.btn-secondary {
+    background-color: #ffffff;
+    color: #2c3e50;
+    border: 1px solid #ddd;
+}
+
+.btn-secondary:hover {
+    background-color: #f8f9fa;
+}
+
+/* 搜索容器 */
+.search-container {
+    max-width: 700px;
+    margin: 0 auto 30px;
+    position: relative;
+}
+
+/* 搜索框样式 */
+.search-box {
+    display: flex;
+    gap: 8px;
+}
+
+.search-input-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 40px 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #2c3e50;
+    box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.1);
+}
+
+.search-placeholder {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 32px);
+}
+
+.search-input:focus + .search-placeholder,
+.search-input:not(:placeholder-shown) + .search-placeholder {
+    opacity: 0;
+}
+
+.reset-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+    font-size: 18px;
+    display: none;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+}
+
+.reset-btn:hover {
+    color: #2c3e50;
+}
+
+.search-input:not(:placeholder-shown) ~ .reset-btn {
+    display: block;
+}
+
+.search-btn {
+    background-color: #2c3e50;
+    color: #ffffff;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 20px;
+}
+
+.search-btn:hover {
+    background-color: #1a252f;
+}
+
+/* 搜索引导 */
+.search-guide {
+    text-align: center;
+    color: #6c757d;
+    font-size: 13px;
+    margin-top: 12px;
+}
+
+.search-guide .quick-links {
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.search-guide .quick-links span {
+    color: #6c757d;
+}
+
+.search-guide .quick-links a {
+    color: #2c3e50;
+    text-decoration: none;
+    padding: 4px 12px;
+    border-radius: 16px;
+    background-color: #f1f3f4;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.search-guide .quick-links a:hover {
+    background-color: #e9ecef;
+    transform: translateY(-1px);
+}
+
+/* 主体内容 */
+.site-main {
+    min-height: calc(100vh - 120px);
+}
+
+/* 真正的瀑布流布局 */
+.site-grid {
+    column-count: 3;
+    column-gap: 20px;
+    column-fill: balance;
+}
+
+@media (max-width: 1024px) {
+    .site-grid {
+        column-count: 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .site-grid {
+        column-count: 1;
+    }
+}
+
+.site-card {
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s ease;
+    break-inside: avoid;
+    margin-bottom: 20px;
+}
+
+.site-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.site-card-header {
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.site-card-url {
+    color: #2c3e50;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    word-break: break-all;
+    display: block;
+    line-height: 1.4;
+}
+
+.site-card-url:hover {
+    color: #1a252f;
+    text-decoration: underline;
+}
+
+.site-card-body {
+    padding: 16px;
+}
+
+/* 简化气泡样式 */
+.review-bubble {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    border: 1px solid #eee;
+}
+
+.review-bubble:last-child {
+    margin-bottom: 0;
+}
+
+.review-user {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 6px;
+    font-size: 13px;
+}
+
+.review-content {
+    color: #495057;
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+/* 胶囊标签样式 */
+.site-card-tags {
+    padding: 0 16px 16px;
+}
+
+.tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tag-item {
+    display: inline-block;
+    background-color: #e9ecef;
+    color: #495057;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+/* 底部样式 */
+.site-footer {
+    background-color: #ffffff;
+    color: #495057;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+    border-top: 1px solid #eee;
+}
+
+/* 登录模态框样式 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 24px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    right: 16px;
+    top: 12px;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 20px;
+    color: #2c3e50;
+}
+
+/* 表单样式 */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #495057;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #2c3e50;
+    box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* 用户操作区域 */
+.user-info span {
+    font-weight: 600;
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+/* 导入区域 */
+.import-section {
+    margin: 16px 0;
+}
+
+.parse-result {
+    background-color: #f8f9fa;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+.parse-result ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.parse-result li {
+    padding: 6px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.parse-result li:last-child {
+    border-bottom: none;
+}
+
+#importSection {
+    margin-top: 16px;
+}

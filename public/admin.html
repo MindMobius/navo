@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navo 后台管理</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <!-- 顶栏工具 -->
+    <div class="top-toolbar">
+        <div class="page-slider">
+            <button class="page-slider-btn">首页</button>
+            <button class="page-slider-btn active">后台管理</button>
+        </div>
+        <button class="user-avatar">U</button>
+        <div class="user-menu" id="userMenu">
+            <button class="user-menu-item" id="profileMenuItem">个人资料</button>
+            <button class="user-menu-item" id="logoutMenuItem">退出登录</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <header class="site-header">
+            <div class="container">
+                <h1 class="site-title">Navo 后台管理</h1>
+                <p class="site-description">站点管理与配置</p>
+            </div>
+        </header>
+
+        <main class="site-main">
+            <div class="container">
+                <div class="admin-section">
+                    <h2>添加新站点</h2>
+                    <form id="siteForm">
+                        <div class="form-group">
+                            <label for="siteUrl">站点地址 *</label>
+                            <input type="url" id="siteUrl" name="siteUrl" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="siteReview">您的评价 *</label>
+                            <textarea id="siteReview" name="siteReview" rows="4" placeholder="请在这里添加您对这个站点的评价..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="siteTags">标签 (用逗号分隔)</label>
+                            <input type="text" id="siteTags" name="siteTags" placeholder="例如: 设计,工具,开发">
+                        </div>
+                        <div class="form-group">
+                            <label for="siteStatus">站点状态</label>
+                            <select id="siteStatus" name="siteStatus">
+                                <option value="public">公开</option>
+                                <option value="private">私有</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary">添加站点</button>
+                    </form>
+                </div>
+
+                <div class="admin-section">
+                    <h2>书签导入</h2>
+                    <div class="import-section">
+                        <form id="uploadForm">
+                            <div class="form-group">
+                                <label for="bookmarkFile">选择书签文件 (HTML格式)</label>
+                                <input type="file" id="bookmarkFile" name="bookmarkFile" accept=".html,.htm" required>
+                            </div>
+                            <button type="submit" class="btn-primary">上传并解析</button>
+                        </form>
+                        
+                        <div id="parseResult" class="parse-result">
+                            <p>请上传书签文件以查看解析结果</p>
+                        </div>
+                        
+                        <div id="importSection" class="import-section" style="display: none;">
+                            <h3>导入预览</h3>
+                            <div class="form-group">
+                                <label for="markdownOutput">编辑后的内容</label>
+                                <textarea id="markdownOutput" rows="15" placeholder="解析后的书签将显示在这里，您可以编辑后再导入"></textarea>
+                            </div>
+                            <button id="importBtn" class="btn-primary">一键导入数据库</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-section">
+                    <h2>站点列表</h2>
+                    <div class="site-grid" id="adminSiteGrid">
+                        <!-- 站点列表将通过JavaScript动态加载 -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <div class="container">
+                <p>&copy; 2025 Navo. 以用户评价为驱动，回归导航的本质</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/js/admin.js"></script>
+    <script>
+        // 顶栏工具功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 页面切换按钮
+            const pageButtons = document.querySelectorAll('.page-slider-btn');
+            pageButtons.forEach((button, index) => {
+                button.addEventListener('click', function() {
+                    // 移除所有按钮的active类
+                    pageButtons.forEach(btn => btn.classList.remove('active'));
+                    // 为当前按钮添加active类
+                    this.classList.add('active');
+                    
+                    // 根据索引执行不同操作
+                    if (index === 0) {
+                        window.location.href = '/';
+                    }
+                });
+            });
+            
+            // 用户头像按钮和菜单
+            const userAvatar = document.querySelector('.user-avatar');
+            const userMenu = document.getElementById('userMenu');
+            const profileMenuItem = document.getElementById('profileMenuItem');
+            const logoutMenuItem = document.getElementById('logoutMenuItem');
+            
+            if (userAvatar && userMenu) {
+                userAvatar.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userMenu.classList.toggle('show');
+                });
+                
+                // 点击页面其他地方关闭菜单
+                document.addEventListener('click', function(e) {
+                    if (!userMenu.contains(e.target) && e.target !== userAvatar) {
+                        userMenu.classList.remove('show');
+                    }
+                });
+                
+                // 个人资料菜单项
+                if (profileMenuItem) {
+                    profileMenuItem.addEventListener('click', function() {
+                        window.location.href = '/user.html';
+                    });
+                }
+                
+                // 退出登录菜单项
+                if (logoutMenuItem) {
+                    logoutMenuItem.addEventListener('click', function() {
+                        if (confirm('确定要退出登录吗？')) {
+                            // 模拟退出登录
+                            alert('已退出登录');
+                            userMenu.classList.remove('show');
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

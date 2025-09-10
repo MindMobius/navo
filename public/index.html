@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navo - 轻量导航站</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- 顶栏工具 -->
+    <div class="top-toolbar">
+        <div class="page-slider">
+            <button class="page-slider-btn active">首页</button>
+            <button class="page-slider-btn">后台管理</button>
+        </div>
+        <button class="user-avatar">U</button>
+        <div class="user-menu" id="userMenu">
+            <button class="user-menu-item" id="loginMenuItem">登录</button>
+            <button class="user-menu-item" id="registerMenuItem">注册</button>
+            <button class="user-menu-item" id="profileMenuItem">个人资料</button>
+            <button class="user-menu-item" id="logoutMenuItem">退出登录</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <header class="site-header">
+            <div class="container">
+                <h1 class="site-title">Navo</h1>
+                <p class="site-description">以用户评价为核心的轻量化导航站</p>
+                
+                <div class="search-container">
+                    <div class="search-box">
+                        <div class="search-input-wrapper">
+                            <input type="text" id="searchInput" class="search-input" placeholder=" ">
+                            <span class="search-placeholder" id="dynamicPlaceholder">搜索网址、用户名或关键词...</span>
+                            <button class="reset-btn" id="resetBtn">×</button>
+                        </div>
+                        <button id="searchBtn" class="search-btn">搜索</button>
+                    </div>
+                    <div class="search-guide">
+                        <div class="quick-links">
+                            <span>快捷搜索：</span>
+                            <a href="#" data-search="设计">设计</a>
+                            <a href="#" data-search="开发">开发</a>
+                            <a href="#" data-search="工具">工具</a>
+                            <a href="#" data-search="AI">AI</a>
+                            <a href="#" data-search="资源">资源</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="site-main">
+            <div class="container">
+                <div class="site-grid" id="siteGrid">
+                    <!-- 站点卡片将通过JavaScript动态加载 -->
+                </div>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <div class="container">
+                <p>&copy; 2025 Navo. 以用户评价为驱动，回归导航的本质</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 登录模态框 -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>用户登录</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">邮箱</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn-primary">登录</button>
+            </form>
+            <p style="text-align: center; margin-top: 15px;">
+                还没有账户？<a href="#" id="switchToRegister" style="color: #2c3e50;">立即注册</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- 注册模态框 -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>用户注册</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="regUsername">用户名</label>
+                    <input type="text" id="regUsername" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">邮箱</label>
+                    <input type="email" id="regEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">密码</label>
+                    <input type="password" id="regPassword" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="regConfirmPassword">确认密码</label>
+                    <input type="password" id="regConfirmPassword" name="confirmPassword" required>
+                </div>
+                <button type="submit" class="btn-primary">注册</button>
+            </form>
+            <p style="text-align: center; margin-top: 15px;">
+                已有账户？<a href="#" id="switchToLogin" style="color: #2c3e50;">立即登录</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

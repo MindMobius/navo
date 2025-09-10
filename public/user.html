@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户中心 - Navo</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    <style>
+        .user-container {
+            max-width: 500px;
+            margin: 80px auto 40px;
+            padding: 0 20px;
+        }
+        
+        .tab-container {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 30px;
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            color: #6c757d;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab-btn.active {
+            color: #2c3e50;
+            border-bottom: 3px solid #2c3e50;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-section {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 24px;
+            border: 1px solid #eee;
+            margin-bottom: 24px;
+        }
+        
+        .form-section h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-weight: 700;
+            font-size: 20px;
+        }
+        
+        .user-info-display {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+        }
+        
+        .user-info-item {
+            display: flex;
+            margin-bottom: 12px;
+        }
+        
+        .user-info-label {
+            width: 80px;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .user-info-value {
+            flex: 1;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶栏工具 -->
+    <div class="top-toolbar">
+        <div class="page-slider">
+            <button class="page-slider-btn">首页</button>
+            <button class="page-slider-btn">后台管理</button>
+        </div>
+        <button class="user-avatar">U</button>
+        <div class="user-menu" id="userMenu">
+            <button class="user-menu-item" id="profileMenuItem">个人资料</button>
+            <button class="user-menu-item" id="logoutMenuItem">退出登录</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="user-container">
+            <div class="tab-container">
+                <button class="tab-btn active" data-tab="profile">个人资料</button>
+                <button class="tab-btn" data-tab="login">登录</button>
+                <button class="tab-btn" data-tab="register">注册</button>
+            </div>
+            
+            <!-- 个人资料 -->
+            <div id="profile" class="tab-content active">
+                <div class="form-section">
+                    <h2>个人资料</h2>
+                    <div class="user-info-display">
+                        <div class="user-info-item">
+                            <div class="user-info-label">用户名:</div>
+                            <div class="user-info-value" id="displayUsername">-</div>
+                        </div>
+                        <div class="user-info-item">
+                            <div class="user-info-label">邮箱:</div>
+                            <div class="user-info-value" id="displayEmail">-</div>
+                        </div>
+                        <div class="user-info-item">
+                            <div class="user-info-label">注册时间:</div>
+                            <div class="user-info-value" id="displayRegDate">-</div>
+                        </div>
+                    </div>
+                    <button id="editProfileBtn" class="btn-primary">编辑资料</button>
+                </div>
+                
+                <div class="form-section" id="editProfileSection" style="display: none;">
+                    <h2>编辑个人资料</h2>
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="editUsername">用户名</label>
+                            <input type="text" id="editUsername" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editEmail">邮箱</label>
+                            <input type="email" id="editEmail" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editPassword">新密码 (不修改请留空)</label>
+                            <input type="password" id="editPassword" name="password">
+                        </div>
+                        <div class="form-group">
+                            <label for="editConfirmPassword">确认新密码</label>
+                            <input type="password" id="editConfirmPassword" name="confirmPassword">
+                        </div>
+                        <button type="submit" class="btn-primary">保存更改</button>
+                        <button type="button" id="cancelEditBtn" class="btn-secondary" style="margin-left: 10px;">取消</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- 登录 -->
+            <div id="login" class="tab-content">
+                <div class="form-section">
+                    <h2>用户登录</h2>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="loginEmail">邮箱</label>
+                            <input type="email" id="loginEmail" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">密码</label>
+                            <input type="password" id="loginPassword" name="password" required>
+                        </div>
+                        <button type="submit" class="btn-primary">登录</button>
+                    </form>
+                    <p style="text-align: center; margin-top: 15px;">
+                        还没有账户？<a href="#" id="switchToRegister" style="color: #2c3e50;">立即注册</a>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- 注册 -->
+            <div id="register" class="tab-content">
+                <div class="form-section">
+                    <h2>用户注册</h2>
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label for="regUsername">用户名</label>
+                            <input type="text" id="regUsername" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="regEmail">邮箱</label>
+                            <input type="email" id="regEmail" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="regPassword">密码</label>
+                            <input type="password" id="regPassword" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="regConfirmPassword">确认密码</label>
+                            <input type="password" id="regConfirmPassword" name="confirmPassword" required>
+                        </div>
+                        <button type="submit" class="btn-primary">注册</button>
+                    </form>
+                    <p style="text-align: center; margin-top: 15px;">
+                        已有账户？<a href="#" id="switchToLogin" style="color: #2c3e50;">立即登录</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2025 Navo. 以用户评价为驱动，回归导航的本质</p>
+        </div>
+    </footer>
+
+    <script>
+        // 模拟用户数据
+        let currentUser = null;
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置标签页切换
+            setupTabs();
+            
+            // 设置表单提交事件
+            setupForms();
+            
+            // 设置顶栏工具
+            setupTopToolbar();
+            
+            // 检查是否有登录用户
+            checkUserStatus();
+        });
+        
+        // 设置标签页切换
+        function setupTabs() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // 移除所有活动状态
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // 添加当前活动状态
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
+        
+        // 设置表单提交事件
+        function setupForms() {
+            // 登录表单
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const email = document.getElementById('loginEmail').value;
+                    const password = document.getElementById('loginPassword').value;
+                    
+                    // 模拟登录
+                    loginUser(email, password);
+                });
+            }
+            
+            // 注册表单
+            const registerForm = document.getElementById('registerForm');
+            if (registerForm) {
+                registerForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const username = document.getElementById('regUsername').value;
+                    const email = document.getElementById('regEmail').value;
+                    const password = document.getElementById('regPassword').value;
+                    const confirmPassword = document.getElementById('regConfirmPassword').value;
+                    
+                    // 简单验证
+                    if (password !== confirmPassword) {
+                        alert('两次输入的密码不一致！');
+                        return;
+                    }
+                    
+                    // 模拟注册
+                    registerUser(username, email, password);
+                });
+            }
+            
+            // 个人资料表单
+            const profileForm = document.getElementById('profileForm');
+            if (profileForm) {
+                profileForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const username = document.getElementById('editUsername').value;
+                    const email = document.getElementById('editEmail').value;
+                    const password = document.getElementById('editPassword').value;
+                    const confirmPassword = document.getElementById('editConfirmPassword').value;
+                    
+                    // 如果输入了密码，验证一致性
+                    if (password && password !== confirmPassword) {
+                        alert('两次输入的密码不一致！');
+                        return;
+                    }
+                    
+                    // 模拟更新资料
+                    updateProfile(username, email, password);
+                });
+            }
+            
+            // 编辑资料按钮
+            const editProfileBtn = document.getElementById('editProfileBtn');
+            if (editProfileBtn) {
+                editProfileBtn.addEventListener('click', function() {
+                    showEditProfileForm();
+                });
+            }
+            
+            // 取消编辑按钮
+            const cancelEditBtn = document.getElementById('cancelEditBtn');
+            if (cancelEditBtn) {
+                cancelEditBtn.addEventListener('click', function() {
+                    hideEditProfileForm();
+                });
+            }
+            
+            // 切换到注册
+            const switchToRegister = document.getElementById('switchToRegister');
+            if (switchToRegister) {
+                switchToRegister.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    switchTab('register');
+                });
+            }
+            
+            // 切换到登录
+            const switchToLogin = document.getElementById('switchToLogin');
+            if (switchToLogin) {
+                switchToLogin.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    switchTab('login');
+                });
+            }
+        }
+        
+        // 切换标签页
+        function switchTab(tabId) {
+            // 移除所有活动状态
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            // 添加当前活动状态
+            document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+        
+        // 显示编辑资料表单
+        function showEditProfileForm() {
+            document.getElementById('editProfileSection').style.display = 'block';
+            
+            // 填充当前用户信息
+            if (currentUser) {
+                document.getElementById('editUsername').value = currentUser.username;
+                document.getElementById('editEmail').value = currentUser.email;
+            }
+        }
+        
+        // 隐藏编辑资料表单
+        function hideEditProfileForm() {
+            document.getElementById('editProfileSection').style.display = 'none';
+        }
+        
+        // 模拟登录
+        function loginUser(email, password) {
+            // 这里应该是实际的登录逻辑
+            console.log('登录信息:', { email, password });
+            
+            // 模拟登录成功
+            currentUser = {
+                username: '测试用户',
+                email: email,
+                regDate: '2025-09-10'
+            };
+            
+            alert('登录成功！');
+            updateUserInfoDisplay();
+            switchTab('profile');
+        }
+        
+        // 模拟注册
+        function registerUser(username, email, password) {
+            // 这里应该是实际的注册逻辑
+            console.log('注册信息:', { username, email, password });
+            
+            // 模拟注册成功
+            currentUser = {
+                username: username,
+                email: email,
+                regDate: new Date().toISOString().split('T')[0]
+            };
+            
+            alert('注册成功！');
+            updateUserInfoDisplay();
+            switchTab('profile');
+        }
+        
+        // 模拟更新资料
+        function updateProfile(username, email, password) {
+            if (currentUser) {
+                currentUser.username = username;
+                currentUser.email = email;
+                if (password) {
+                    // 这里应该是实际的密码更新逻辑
+                    console.log('密码已更新');
+                }
+                
+                alert('资料更新成功！');
+                updateUserInfoDisplay();
+                hideEditProfileForm();
+            }
+        }
+        
+        // 更新用户信息显示
+        function updateUserInfoDisplay() {
+            if (currentUser) {
+                document.getElementById('displayUsername').textContent = currentUser.username;
+                document.getElementById('displayEmail').textContent = currentUser.email;
+                document.getElementById('displayRegDate').textContent = currentUser.regDate;
+            }
+        }
+        
+        // 检查用户状态
+        function checkUserStatus() {
+            // 这里应该是实际的用户状态检查逻辑
+            // 模拟未登录状态
+            updateUserInfoDisplay();
+        }
+        
+        // 顶栏工具功能
+        function setupTopToolbar() {
+            // 页面切换按钮
+            const pageButtons = document.querySelectorAll('.page-slider-btn');
+            pageButtons.forEach((button, index) => {
+                button.addEventListener('click', function() {
+                    // 移除所有按钮的active类
+                    pageButtons.forEach(btn => btn.classList.remove('active'));
+                    // 为当前按钮添加active类
+                    this.classList.add('active');
+                    
+                    // 根据索引执行不同操作
+                    if (index === 0) {
+                        window.location.href = '/';
+                    } else if (index === 1) {
+                        window.location.href = '/admin.html';
+                    }
+                });
+            });
+            
+            // 用户头像按钮和菜单
+            const userAvatar = document.querySelector('.user-avatar');
+            const userMenu = document.getElementById('userMenu');
+            const profileMenuItem = document.getElementById('profileMenuItem');
+            const logoutMenuItem = document.getElementById('logoutMenuItem');
+            
+            if (userAvatar && userMenu) {
+                userAvatar.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userMenu.classList.toggle('show');
+                });
+                
+                // 点击页面其他地方关闭菜单
+                document.addEventListener('click', function(e) {
+                    if (!userMenu.contains(e.target) && e.target !== userAvatar) {
+                        userMenu.classList.remove('show');
+                    }
+                });
+                
+                // 个人资料菜单项
+                if (profileMenuItem) {
+                    profileMenuItem.addEventListener('click', function() {
+                        window.location.href = '/user.html';
+                    });
+                }
+                
+                // 退出登录菜单项
+                if (logoutMenuItem) {
+                    logoutMenuItem.addEventListener('click', function() {
+                        // 模拟退出登录
+                        currentUser = null;
+                        alert('已退出登录');
+                        userMenu.classList.remove('show');
+                        updateUserInfoDisplay();
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+</html>
