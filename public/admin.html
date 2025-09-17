@@ -3,159 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navo 后台管理</title>
+    <title>Navo - 管理中心</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/admin.css">
+    <script src="https://unpkg.com/feather-icons"></script>
 </head>
 <body>
-    <!-- 顶栏工具 -->
+    <!-- 顶部工具栏 -->
     <div class="top-toolbar">
-        <div class="page-slider">
-            <button class="page-slider-btn">首页</button>
-            <button class="page-slider-btn active">后台管理</button>
+        <div class="toolbar-branding">
+            <div class="toolbar-title-container">
+                <h1 class="toolbar-title">Navo</h1>
+                <p class="toolbar-description">以用户评价为核心的轻量化导航站</p>
+            </div>
         </div>
-        <button class="user-avatar">U</button>
-        <div class="user-menu" id="userMenu">
-            <button class="user-menu-item" id="profileMenuItem">个人资料</button>
-            <button class="user-menu-item" id="logoutMenuItem">退出登录</button>
+        <div class="admin-button-container">
+            <button class="admin-btn" id="backToMainBtn" title="返回首页">
+                <i data-feather="home"></i>
+            </button>
         </div>
     </div>
 
+    <!-- 主要内容容器 -->
     <div class="main-content">
-        <header class="site-header">
-            <div class="container">
-                <h1 class="site-title">Navo 后台管理</h1>
-                <p class="site-description">站点管理与配置</p>
-            </div>
-        </header>
 
-        <main class="site-main">
+
+        <!-- 主体内容 -->
+        <main class="admin-main">
             <div class="container">
-                <div class="admin-section">
-                    <h2>添加新站点</h2>
-                    <form id="siteForm">
-                        <div class="form-group">
-                            <label for="siteUrl">站点地址 *</label>
-                            <input type="url" id="siteUrl" name="siteUrl" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="siteReview">您的评价 *</label>
-                            <textarea id="siteReview" name="siteReview" rows="4" placeholder="请在这里添加您对这个站点的评价..." required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="siteTags">标签 (用逗号分隔)</label>
-                            <input type="text" id="siteTags" name="siteTags" placeholder="例如: 设计,工具,开发">
-                        </div>
-                        <div class="form-group">
-                            <label for="siteStatus">站点状态</label>
-                            <select id="siteStatus" name="siteStatus">
-                                <option value="public">公开</option>
-                                <option value="private">私有</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn-primary">添加站点</button>
-                    </form>
+                <!-- 页面导航 -->
+                <div class="admin-nav">
+                    <button class="admin-nav-btn active" data-page="site-management">
+                        <i data-feather="globe"></i>
+                        <span>站点管理</span>
+                    </button>
+                    <button class="admin-nav-btn" data-page="review-management">
+                        <i data-feather="message-square"></i>
+                        <span>评论管理</span>
+                    </button>
                 </div>
 
-                <div class="admin-section">
-                    <h2>书签导入</h2>
-                    <div class="import-section">
-                        <form id="uploadForm">
-                            <div class="form-group">
-                                <label for="bookmarkFile">选择书签文件 (HTML格式)</label>
-                                <input type="file" id="bookmarkFile" name="bookmarkFile" accept=".html,.htm" required>
-                            </div>
-                            <button type="submit" class="btn-primary">上传并解析</button>
-                        </form>
-                        
-                        <div id="parseResult" class="parse-result">
-                            <p>请上传书签文件以查看解析结果</p>
+                <div class="admin-content">
+                    <!-- 站点管理页面 -->
+                    <div class="admin-page active" id="site-management-page">
+                        <div class="admin-page-header">
+                            <h2>站点列表</h2>
+                            <button id="addSiteBtn" class="btn-primary">
+                                <i data-feather="plus"></i>
+                                添加站点
+                            </button>
                         </div>
                         
-                        <div id="importSection" class="import-section" style="display: none;">
-                            <h3>导入预览</h3>
-                            <div class="form-group">
-                                <label for="markdownOutput">编辑后的内容</label>
-                                <textarea id="markdownOutput" rows="15" placeholder="解析后的书签将显示在这里，您可以编辑后再导入"></textarea>
+                        <div class="admin-section">
+                            <div class="site-grid" id="adminSiteGrid">
+                                <!-- 站点列表将通过JavaScript动态加载 -->
+                                <p class="empty-placeholder">暂无站点数据</p>
                             </div>
-                            <button id="importBtn" class="btn-primary">一键导入数据库</button>
                         </div>
                     </div>
-                </div>
 
-                <div class="admin-section">
-                    <h2>站点列表</h2>
-                    <div class="site-grid" id="adminSiteGrid">
-                        <!-- 站点列表将通过JavaScript动态加载 -->
+                    <!-- 添加站点表单 -->
+                    <div class="admin-page" id="add-site-page">
+                        <div class="admin-page-header">
+                            <button id="backToSitesBtn" class="btn-secondary">
+                                <i data-feather="arrow-left"></i>
+                                返回
+                            </button>
+                            <h2>添加新站点</h2>
+                        </div>
+                        
+                        <div class="admin-section">
+                            <form id="siteForm">
+                                <div class="form-group">
+                                    <label for="siteUrl">站点地址 *</label>
+                                    <input type="url" id="siteUrl" name="siteUrl" required placeholder="https://example.com">
+                                </div>
+                                <div class="form-group">
+                                    <label for="siteReview">您的评价 *</label>
+                                    <textarea id="siteReview" name="siteReview" rows="4" placeholder="请在这里添加您对这个站点的评价..." required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="siteTags">标签 (用逗号分隔)</label>
+                                    <input type="text" id="siteTags" name="siteTags" placeholder="例如: 设计,工具,开发">
+                                </div>
+                                <div class="form-group">
+                                    <label for="siteStatus">站点状态</label>
+                                    <select id="siteStatus" name="siteStatus">
+                                        <option value="public">公开</option>
+                                        <option value="private">私有</option>
+                                    </select>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" id="cancelAddSiteBtn" class="btn-secondary">取消</button>
+                                    <button type="submit" class="btn-primary">添加站点</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
+
+                    <!-- 编辑站点表单 -->
+                    <div class="admin-page" id="edit-site-page">
+                        <div class="admin-page-header">
+                            <button id="backToSitesFromEditBtn" class="btn-secondary">
+                                <i data-feather="arrow-left"></i>
+                                返回
+                            </button>
+                            <h2>编辑站点</h2>
+                        </div>
+                        
+                        <div class="admin-section">
+                            <form id="editSiteForm">
+                                <input type="hidden" id="editSiteId">
+                                <div class="form-group">
+                                    <label for="editSiteUrl">站点地址 *</label>
+                                    <input type="url" id="editSiteUrl" name="editSiteUrl" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editSiteReview">您的评价 *</label>
+                                    <textarea id="editSiteReview" name="editSiteReview" rows="4" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editSiteTags">标签 (用逗号分隔)</label>
+                                    <input type="text" id="editSiteTags" name="editSiteTags">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editSiteStatus">站点状态</label>
+                                    <select id="editSiteStatus" name="editSiteStatus">
+                                        <option value="public">公开</option>
+                                        <option value="private">私有</option>
+                                    </select>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" id="cancelEditSiteBtn" class="btn-secondary">取消</button>
+                                    <button type="submit" class="btn-primary">保存更改</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 评论管理页面 -->
+                    <div class="admin-page" id="review-management-page">
+                        <div class="admin-page-header">
+                            <h2>评论列表</h2>
+                        </div>
+                        
+                        <div class="admin-section">
+                            <div class="reviews-grid" id="reviewsGrid">
+                                <!-- 评论列表将通过JavaScript动态加载 -->
+                                <p class="empty-placeholder">暂无评论数据</p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </main>
 
+        <!-- 页脚 -->
         <footer class="site-footer">
             <div class="container">
-                <p>&copy; 2025 Navo. 以用户评价为驱动，回归导航的本质</p>
+                <div class="footer-content">
+                    <div class="footer-links">
+                        <span class="footer-item">项目支持：<a href="https://github.com/MindMobius" target="_blank" class="github-link"><i
+                                    data-feather="github"></i> MindMobius</a></span>
+                        <span class="footer-item">仓库地址：<a href="https://github.com/MindMobius/navo" target="_blank" class="github-link"><i
+                                    data-feather="github"></i> navo</a></span>
+                    </div>
+                </div>
             </div>
         </footer>
     </div>
 
+    <!-- 脚本 -->
     <script src="/js/admin.js"></script>
     <script>
-        // 顶栏工具功能
+        // 初始化 feather icons
+        feather.replace();
+        
+        // 页面初始化
         document.addEventListener('DOMContentLoaded', function() {
-            // 页面切换按钮
-            const pageButtons = document.querySelectorAll('.page-slider-btn');
-            pageButtons.forEach((button, index) => {
+            // 返回首页功能
+            const backToMainBtn = document.getElementById('backToMainBtn');
+            if (backToMainBtn) {
+                backToMainBtn.addEventListener('click', function() {
+                    window.location.href = '/';
+                });
+            }
+            
+            // 管理页面切换
+            const navButtons = document.querySelectorAll('.admin-nav-btn');
+            const pages = document.querySelectorAll('.admin-page');
+            
+            navButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    // 移除所有按钮的active类
-                    pageButtons.forEach(btn => btn.classList.remove('active'));
-                    // 为当前按钮添加active类
+                    const targetPage = this.getAttribute('data-page');
+                    
+                    // 更新按钮状态
+                    navButtons.forEach(btn => btn.classList.remove('active'));
                     this.classList.add('active');
                     
-                    // 根据索引执行不同操作
-                    if (index === 0) {
-                        window.location.href = '/';
-                    }
+                    // 显示目标页面
+                    pages.forEach(page => {
+                        page.classList.remove('active');
+                        if (page.id === targetPage + '-page') {
+                            page.classList.add('active');
+                        }
+                    });
                 });
             });
             
-            // 用户头像按钮和菜单
-            const userAvatar = document.querySelector('.user-avatar');
-            const userMenu = document.getElementById('userMenu');
-            const profileMenuItem = document.getElementById('profileMenuItem');
-            const logoutMenuItem = document.getElementById('logoutMenuItem');
-            
-            if (userAvatar && userMenu) {
-                userAvatar.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    userMenu.classList.toggle('show');
+            // 添加站点按钮
+            const addSiteBtn = document.getElementById('addSiteBtn');
+            if (addSiteBtn) {
+                addSiteBtn.addEventListener('click', function() {
+                    // 隐藏站点列表页面
+                    document.getElementById('site-management-page').classList.remove('active');
+                    // 显示添加站点页面
+                    document.getElementById('add-site-page').classList.add('active');
                 });
-                
-                // 点击页面其他地方关闭菜单
-                document.addEventListener('click', function(e) {
-                    if (!userMenu.contains(e.target) && e.target !== userAvatar) {
-                        userMenu.classList.remove('show');
-                    }
-                });
-                
-                // 个人资料菜单项
-                if (profileMenuItem) {
-                    profileMenuItem.addEventListener('click', function() {
-                        window.location.href = '/user.html';
-                    });
-                }
-                
-                // 退出登录菜单项
-                if (logoutMenuItem) {
-                    logoutMenuItem.addEventListener('click', function() {
-                        if (confirm('确定要退出登录吗？')) {
-                            // 模拟退出登录
-                            alert('已退出登录');
-                            userMenu.classList.remove('show');
-                        }
-                    });
-                }
             }
+            
+            // 返回站点列表按钮
+            const backToSitesBtn = document.getElementById('backToSitesBtn');
+            const backToSitesFromEditBtn = document.getElementById('backToSitesFromEditBtn');
+            const cancelAddSiteBtn = document.getElementById('cancelAddSiteBtn');
+            const cancelEditSiteBtn = document.getElementById('cancelEditSiteBtn');
+            
+            [backToSitesBtn, backToSitesFromEditBtn, cancelAddSiteBtn, cancelEditSiteBtn].forEach(btn => {
+                if (btn) {
+                    btn.addEventListener('click', function() {
+                        // 隐藏当前页面
+                        document.querySelector('.admin-page.active').classList.remove('active');
+                        // 显示站点列表页面
+                        document.getElementById('site-management-page').classList.add('active');
+                        // 激活站点管理导航按钮
+                        navButtons.forEach(btn => btn.classList.remove('active'));
+                        document.querySelector('.admin-nav-btn[data-page="site-management"]').classList.add('active');
+                    });
+                }
+            });
         });
     </script>
 </body>

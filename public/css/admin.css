@@ -1,3 +1,93 @@
+/* 管理页面基础样式 */
+.admin-header {
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px 0;
+    margin-bottom: 20px;
+}
+
+.admin-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.admin-main {
+    padding: 20px 0;
+}
+
+/* 导航样式 */
+.admin-nav {
+    display: flex;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 5px;
+    margin-bottom: 24px;
+    border: 1px solid #eee;
+}
+
+.admin-nav-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #5f6368;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.admin-nav-btn:hover {
+    background: #f8f9fa;
+    color: #2c3e50;
+}
+
+.admin-nav-btn.active {
+    background: #2c3e50;
+    color: #ffffff;
+}
+
+.admin-nav-btn i {
+    width: 20px;
+    height: 20px;
+}
+
+/* 内容区域 */
+.admin-content {
+    position: relative;
+}
+
+.admin-page {
+    display: none;
+}
+
+.admin-page.active {
+    display: block;
+}
+
+.admin-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.admin-page-header h2 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+/* 管理页面基础样式 */
 .admin-section {
     background: #ffffff;
     border-radius: 8px;
@@ -16,6 +106,7 @@
     font-size: 20px;
 }
 
+/* 表单样式 */
 .form-group {
     margin-bottom: 16px;
 }
@@ -37,6 +128,7 @@
     border-radius: 6px;
     font-size: 14px;
     font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .form-group input:focus,
@@ -52,6 +144,14 @@
     min-height: 80px;
 }
 
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+/* 按钮样式 */
 .btn-primary {
     font-family: inherit;
     font-size: 14px;
@@ -65,10 +165,15 @@
     min-width: 80px;
     background-color: #2c3e50;
     color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .btn-primary:hover {
     background-color: #1a252f;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .btn-secondary {
@@ -84,18 +189,25 @@
     min-width: 80px;
     background-color: #ffffff;
     color: #2c3e50;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .btn-secondary:hover {
     background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* 站点卡片样式 */
 .site-card-actions {
     padding: 16px;
     background-color: #f8f9fa;
     border-top: 1px solid #eee;
     display: flex;
     gap: 10px;
+    justify-content: flex-end;
 }
 
 .site-card-actions button {
@@ -103,6 +215,12 @@
     font-size: 14px;
     min-height: 32px;
     border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .site-card-actions .edit-btn {
@@ -113,6 +231,8 @@
 
 .site-card-actions .edit-btn:hover {
     background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .site-card-actions .delete-btn {
@@ -123,53 +243,60 @@
 
 .site-card-actions .delete-btn:hover {
     background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
+
+/* 空状态占位符 */
+.empty-placeholder {
+    text-align: center;
+    color: #6c757d;
+    padding: 40px 0;
+    font-style: italic;
 }
 
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+/* 页脚样式 */
+.admin-footer {
+    margin-top: 40px;
+    padding: 20px 0;
+    border-top: 1px solid #eee;
 }
 
-.user-info span {
-    font-weight: 600;
-    font-size: 16px;
-    color: #2c3e50;
+.footer-item {
+    color: #6c757d;
+    font-size: 14px;
 }
 
-.import-section {
-    margin: 20px 0;
-}
-
-.parse-result {
-    background-color: #f8f9fa;
-    border: 1px solid #eee;
-    border-radius: 6px;
-    padding: 16px;
-    margin: 16px 0;
-}
-
-.parse-result ul {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-.parse-result li {
-    padding: 6px 0;
-    border-bottom: 1px solid #eee;
-}
-
-.parse-result li:last-child {
-    border-bottom: none;
-}
-
-#importSection {
-    margin-top: 20px;
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .admin-section {
+        padding: 16px;
+    }
+    
+    .site-card-actions {
+        flex-direction: column;
+    }
+    
+    .site-card-actions button {
+        width: 100%;
+    }
+    
+    .admin-nav {
+        flex-direction: column;
+    }
+    
+    .admin-nav-btn {
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 10px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions button {
+        width: 100%;
+    }
 }
