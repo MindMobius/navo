@@ -117,9 +117,9 @@ function renderSites(sites) {
     siteGrid.innerHTML = '';
     
     sites.forEach(site => {
-        // 初始化当前站点的评论索引
+        // 初始化当前站点的评论索引为随机索引
         if (siteReviewIndices[site.id] === undefined) {
-            siteReviewIndices[site.id] = 0;
+            siteReviewIndices[site.id] = Math.floor(Math.random() * site.reviews.length);
         }
         
         const card = document.createElement('div');
@@ -164,7 +164,6 @@ function renderSites(sites) {
                 <div class="review-content">
                     ${renderMarkdown(currentReview.content)}
                 </div>
-                <button class="random-review-btn" onclick="showRandomReview(${site.id}); event.stopPropagation();">换一条</button>
             </div>
         `;
         siteGrid.appendChild(card);
@@ -172,21 +171,6 @@ function renderSites(sites) {
     
     // 重新渲染feather图标
     feather.replace();
-}
-
-// 显示随机评论
-function showRandomReview(siteId) {
-    const site = sampleSites.find(s => s.id === siteId);
-    if (!site) return;
-    
-    // 获取不重复的随机索引
-    let newIndex;
-    do {
-        newIndex = Math.floor(Math.random() * site.reviews.length);
-    } while (site.reviews.length > 1 && newIndex === siteReviewIndices[siteId]);
-    
-    siteReviewIndices[siteId] = newIndex;
-    renderSites(sampleSites);
 }
 
 // 显示站点详情
@@ -665,9 +649,15 @@ function copyText(textarea) {
     
     // 显示复制成功提示
     const originalBackground = textarea.style.backgroundColor;
-    textarea.style.backgroundColor = '#d4edda';
+    const originalTransition = textarea.style.transition;
+    textarea.style.transition = 'background-color 0.3s ease';
+    textarea.style.backgroundColor = '#ffffff'; // 使用更美观的浅蓝色替代绿色
+    textarea.style.boxShadow = '0 0 8px rgba(255, 255, 255, 0.19)'; // 添加蓝色光晕效果
+    
     setTimeout(() => {
         textarea.style.backgroundColor = originalBackground;
+        textarea.style.boxShadow = 'none';
+        textarea.style.transition = originalTransition;
     }, 500);
 }
 
