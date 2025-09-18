@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>密钥认证 - Navo</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/key-auth.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+    <!-- 顶栏工具 -->
+    <div class="top-toolbar">
+        <div class="toolbar-branding">
+            <div class="toolbar-title-container">
+                <h1 class="toolbar-title">Navo</h1>
+                <p class="toolbar-description">以用户评价为核心的轻量化导航站</p>
+            </div>
+        </div>
+        <div class="admin-button-container">
+            <a href="/" class="admin-btn" id="homeBtn" title="首页">
+                <i data-feather="home"></i>
+            </a>
+            <button class="admin-btn active" id="keyAuthBtn" title="密钥认证">
+                <i data-feather="key"></i>
+                <span class="key-status-indicator" id="keyStatusIndicator"></span>
+            </button>
+            <a href="/admin.html" class="admin-btn" id="adminBtn" title="管理">
+                <i data-feather="settings"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- 帮助说明弹窗 -->
+    <div class="modal" id="helpModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>关于密钥认证</h2>
+                <button class="close-btn" id="closeHelpModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="help-section">
+                    <h3>密钥认证是什么？</h3>
+                    <p>密钥认证是 Navo 的用户身份管理系统。它替代了传统的用户名/密码系统，您只需要提供两个容易记住的字符串即可生成唯一密钥。</p>
+                </div>
+                
+                <div class="help-section">
+                    <h3>如何使用？</h3>
+                    <p><strong>na</strong> 相当于用户名，建议使用容易记住的词。</p>
+                    <p><strong>vo</strong> 相当于密码，建议使用数字或日期。</p>
+                    <p>两个字符串只保存在您的本地浏览器中，系统数据库不会记录。</p>
+                </div>
+                
+                <div class="help-section">
+                    <h3>注意事项</h3>
+                    <p>更换密钥相当于切换用户身份，您将无法管理之前创建的数据。</p>
+                    <p>创建的数据将与当前密钥关联，请务必记住您的两个字符串。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container key-auth-container">
+            <div class="key-auth-header">
+                <div class="header-content">
+                    <div class="header-title">
+                        <h1>密钥认证</h1>
+                    </div>
+                    <div class="header-actions">
+                        <button class="admin-btn" id="helpBtn" title="帮助说明">
+                            <i data-feather="help-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="key-auth-wrapper">
+                <!-- 首次使用引导 -->
+                <div class="guide-section" id="guideSection" style="display: none;">
+                    <div class="guide-content">
+                        <h3>欢迎使用 Navo 密钥认证</h3>
+                        <p>您还没有生成过密钥，按照以下步骤开始使用：</p>
+                        <div class="guide-steps">
+                            <div class="guide-step">
+                                <div class="guide-step-number">1</div>
+                                <div class="guide-step-title">输入na和vo</div>
+                                <div class="guide-step-desc">在"生成密钥"标签页中输入两个容易记住的字符串</div>
+                            </div>
+                            <div class="guide-step">
+                                <div class="guide-step-number">2</div>
+                                <div class="guide-step-title">生成密钥</div>
+                                <div class="guide-step-desc">点击"生成并保存密钥"按钮创建您的访问密钥</div>
+                            </div>
+                            <div class="guide-step">
+                                <div class="guide-step-number">3</div>
+                                <div class="guide-step-title">开始使用</div>
+                                <div class="guide-step-desc">使用生成的密钥访问和管理您的数据</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 主要内容区域 -->
+                <div class="key-auth-main" id="keyAuthMain">
+                    <div class="current-key-section card" id="currentKeySection" style="display: none;">
+                        <h2>当前密钥</h2>
+                        <div class="current-key-content">
+                            <div class="key-strings">
+                                <div class="string-item-row">
+                                    <div class="string-item">
+                                        <span class="string-label">na：</span>
+                                        <span class="string-value" id="currentString1"></span>
+                                        <button class="copy-text-btn" id="copyString1Btn" data-target="currentString1" title="复制na">
+                                            <i data-feather="copy"></i>
+                                        </button>
+                                    </div>
+                                    <div class="string-item">
+                                        <span class="string-label">vo：</span>
+                                        <span class="string-value" id="currentString2"></span>
+                                        <button class="copy-text-btn" id="copyString2Btn" data-target="currentString2" title="复制vo">
+                                            <i data-feather="copy"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="key-display">
+                                <div class="key-content">
+                                    <span class="string-label">key：</span>
+                                    <span id="currentKey"></span>
+                                    <button id="copyKeyBtn" class="copy-key-btn" title="复制密钥">
+                                        <i data-feather="copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="key-auth-tabs card">
+                        <div class="tabs">
+                            <button class="tab-btn active" data-tab="generate">生成密钥</button>
+                            <button class="tab-btn" data-tab="history">密钥记录</button>
+                        </div>
+                        
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="generate-tab">
+                                <form id="keyAuthForm" class="key-auth-form">
+                                    <div class="form-group">
+                                        <label for="string1">na（相当于用户名）</label>
+                                        <input type="text" id="string1" class="form-control" placeholder="输入na字符串">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="string2">vo（相当于密码）</label>
+                                        <input type="text" id="string2" class="form-control" placeholder="输入vo字符串">
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-submit">生成并保存密钥</button>
+                                </form>
+                            </div>
+                            
+                            <div class="tab-pane" id="history-tab">
+                                <div class="history-header">
+                                    <h2>密钥记录</h2>
+                                </div>
+                                <div class="history-content">
+                                    <div class="history-grid" id="keyHistoryGrid">
+                                        <!-- 历史记录将在这里显示 -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    <footer class="site-footer">
+                        <div class="container">
+                            <div class="footer-content">
+                                <div class="footer-links">
+                                    <span class="footer-item">项目支持：<a href="https://github.com/MindMobius" target="_blank"
+                                            class="github-link"><i data-feather="github"></i> MindMobius</a></span>
+                                    <span class="footer-item">仓库地址：<a href="https://github.com/MindMobius/navo" target="_blank"
+                                            class="github-link"><i data-feather="github"></i> navo</a></span>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/key-auth.js"></script>
+    <script>
+        // 初始化 feather icons
+        feather.replace();
+        
+        // 顶栏工具功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 页面切换按钮
+            const homeBtn = document.getElementById('homeBtn');
+            const adminBtn = document.getElementById('adminBtn');
+            const helpBtn = document.getElementById('helpBtn');
+            const helpModal = document.getElementById('helpModal');
+            const closeHelpModal = document.getElementById('closeHelpModal');
+            
+            // 标签页切换
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // 更新激活的按钮
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 更新激活的面板
+                    tabPanes.forEach(pane => pane.classList.remove('active'));
+                    document.getElementById(tabId + '-tab').classList.add('active');
+                });
+            });
+            
+            if (homeBtn) {
+                homeBtn.addEventListener('click', function() {
+                    window.location.href = '/';
+                });
+            }
+            
+            if (adminBtn) {
+                adminBtn.addEventListener('click', function() {
+                    window.location.href = '/admin.html';
+                });
+            }
+            
+            if (helpBtn) {
+                helpBtn.addEventListener('click', function() {
+                    helpModal.style.display = 'block';
+                });
+            }
+            
+            if (closeHelpModal) {
+                closeHelpModal.addEventListener('click', function() {
+                    helpModal.style.display = 'none';
+                });
+            }
+            
+            // 点击模态框外部关闭
+            window.addEventListener('click', function(event) {
+                if (event.target === helpModal) {
+                    helpModal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

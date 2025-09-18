@@ -18,8 +18,15 @@
             </div>
         </div>
         <div class="admin-button-container">
-            <button class="admin-btn" id="backToMainBtn" title="返回首页">
+            <a href="/" class="admin-btn" id="homeBtn" title="返回首页">
                 <i data-feather="home"></i>
+            </a>
+            <a href="/key-auth.html" class="admin-btn" id="keyAuthBtn" title="密钥认证">
+                <i data-feather="key"></i>
+                <span class="key-status-indicator" id="keyStatusIndicator"></span>
+            </a>
+            <button class="admin-btn active" id="adminBtn" title="管理中心">
+                <i data-feather="settings"></i>
             </button>
         </div>
     </div>

@@ -43,17 +43,30 @@ const Admin = (function() {
 
     // 初始化函数
     function init() {
+        updateKeyStatusIndicator();
+        
         // 缓存DOM元素
         cacheDOMElements();
         
         // 绑定事件
         bindEvents();
         
-        // 渲染所有站点
-        renderSites(sites);
+        // 初始化 feather icons
+        feather.replace();
         
-        // 初始化用户界面状态
-        updateUserUIState();
+        // 加载站点数据
+        loadSites();
+        
+        // 初始化搜索功能
+        initSearch();
+    }
+
+    function updateKeyStatusIndicator() {
+        const keyIndicator = document.getElementById('keyStatusIndicator');
+        if (keyIndicator) {
+            const hasKey = localStorage.getItem('navo_api_key');
+            keyIndicator.classList.add(hasKey ? 'active' : 'inactive');
+        }
     }
 
     // 缓存DOM元素
@@ -66,6 +79,17 @@ const Admin = (function() {
         elements.importSection = document.getElementById('importSection');
         elements.markdownOutput = document.getElementById('markdownOutput');
         elements.importBtn = document.getElementById('importBtn');
+    }
+    
+    // 搜索功能（占位符）
+    function initSearch() {
+        // TODO: 实现搜索功能
+    }
+    
+    // 加载站点数据（占位符）
+    function loadSites() {
+        renderSites(sites);
+        updateUserUIState();
     }
 
     // 绑定事件
@@ -303,6 +327,9 @@ const Admin = (function() {
         renderSites: renderSites
     };
 })();
+
+// DOM加载完成后初始化
+document.addEventListener('DOMContentLoaded', Admin.init);
 
 // 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', function() {

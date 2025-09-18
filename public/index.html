@@ -18,6 +18,13 @@
             </div>
         </div>
         <div class="admin-button-container">
+            <button class="admin-btn active" id="homeBtn" title="首页">
+                <i data-feather="home"></i>
+            </button>
+            <button class="admin-btn" id="keyAuthBtn" title="密钥认证">
+                <i data-feather="key"></i>
+                <span class="key-status-indicator" id="keyStatusIndicator"></span>
+            </button>
             <button class="admin-btn" id="adminBtn" title="管理">
                 <i data-feather="settings"></i>
             </button>
@@ -73,21 +80,36 @@
         // 顶栏工具功能
         document.addEventListener('DOMContentLoaded', function() {
             // 页面切换按钮
-            const homeBtn = document.getElementById('homeBtn');
             const adminBtn = document.getElementById('adminBtn');
-            
-            if (homeBtn) {
-                homeBtn.addEventListener('click', function() {
-                    window.location.href = '/';
-                });
-            }
+            const keyAuthBtn = document.getElementById('keyAuthBtn');
             
             if (adminBtn) {
                 adminBtn.addEventListener('click', function() {
                     window.location.href = '/admin.html';
                 });
             }
+            
+            if (keyAuthBtn) {
+                keyAuthBtn.addEventListener('click', function() {
+                    window.location.href = '/key-auth.html';
+                });
+            }
+            
+            // 更新密钥状态指示器
+            updateKeyStatusIndicator();
         });
+        
+        function updateKeyStatusIndicator() {
+            const keyStatusIndicator = document.getElementById('keyStatusIndicator');
+            if (keyStatusIndicator) {
+                const apiKey = localStorage.getItem('navo_api_key');
+                if (apiKey) {
+                    keyStatusIndicator.className = 'key-status-indicator active';
+                } else {
+                    keyStatusIndicator.className = 'key-status-indicator inactive';
+                }
+            }
+        }
     </script>
 </body>
 </html>

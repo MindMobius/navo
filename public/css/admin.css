@@ -17,6 +17,11 @@
     padding: 20px 0;
 }
 
+/* 移除可能影响页面滑块的全局box-shadow样式 */
+.page-slider {
+    box-shadow: none !important;
+}
+
 /* 导航样式 */
 .admin-nav {
     display: flex;

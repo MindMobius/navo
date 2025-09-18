@@ -670,3 +670,16 @@ function copyText(textarea) {
         textarea.style.backgroundColor = originalBackground;
     }, 500);
 }
+
+// 页面滑块功能
+document.addEventListener('DOMContentLoaded', function() {
+    updateKeyStatusIndicator();
+});
+
+function updateKeyStatusIndicator() {
+    const keyIndicator = document.getElementById('keyStatusIndicator');
+    if (keyIndicator) {
+        const hasKey = localStorage.getItem('navo_api_key');
+        keyIndicator.classList.add(hasKey ? 'active' : 'inactive');
+    }
+}
