@@ -11,21 +11,23 @@
 - name: TEXT NOT NULL - 站点名称
 - url: TEXT NOT NULL - 站点地址
 - icon: TEXT - 图标
-- status: TEXT NOT NULL DEFAULT 'public' - 状态: 'public', 'private', 'deleted' 等
+- status: TEXT NOT NULL DEFAULT 'actived' - 状态: 'actived', 'deleted' 等
 - created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP - 创建时间
 - updated_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP - 更新时间
 
-
-### 评论表 (reviews)
+#### 评论表 (reviews)
 - id: INTEGER PRIMARY KEY AUTOINCREMENT - 自增主键
 - suid: TEXT NOT NULL - 站点uid，外键关联sites表
-- content: TEXT - Markdown 格式的点评内容
 - token: TEXT NOT NULL - 授权令牌
-- status: TEXT NOT NULL DEFAULT 'public' - 状态: 'public', 'private', 'deleted' 等
+- content: TEXT - Markdown 格式的点评内容
 - created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP - 创建时间
 - updated_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP - 更新时间
 
-### 收藏夹表 (favorites)
+### 索引
+
+### 规划中，暂不实现
+
+#### 收藏夹表 (favorites)
 - id: INTEGER PRIMARY KEY AUTOINCREMENT - 自增主键
 - name: TEXT NOT NULL - 收藏夹名称
 - slug: TEXT - 别名
@@ -33,12 +35,10 @@
 - created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP - 创建时间
 - updated_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP - 更新时间
 
-### 收藏关联表 (favorite_relations)
+#### 收藏关联表 (favorite_relations)
 - id: INTEGER PRIMARY KEY AUTOINCREMENT - 自增主键
 - favorite_id: INTEGER NOT NULL - 收藏夹id，外键关联favorites表
 - suid: INTEGER NOT NULL - 站点uid，外键关联sites表
 - created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP - 创建时间
 - updated_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP - 更新时间
 - unique (favorite_id, suid)
-
-### 索引
