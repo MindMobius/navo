@@ -32,6 +32,11 @@ export default {
 			return env.ASSETS.fetch(request);
 		}
 		
+		// 处理 favicon 请求
+		if (pathname === '/favicon.ico') {
+			return env.ASSETS.fetch(request);
+		}
+		
 		// 处理收藏夹详情页面（通过fav-前缀访问）
 		if (pathname.startsWith('/fav-')) {
 			// 对于 /fav-收藏夹别名 路由，重写为 /fav.html?slug=收藏夹别名
