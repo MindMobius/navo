@@ -26,6 +26,22 @@ export default {
 		if (pathname === '/admin.html') {
 			return env.ASSETS.fetch(request);
 		}
+		
+		// 处理密钥认证页面
+		if (pathname === '/key-auth.html') {
+			return env.ASSETS.fetch(request);
+		}
+		
+		// 处理收藏夹详情页面（通过fav-前缀访问）
+		if (pathname.startsWith('/fav-')) {
+			// 对于 /fav-收藏夹别名 路由，重写为 /fav.html?slug=收藏夹别名
+			const favSlug = pathname.substring(5); // 移除 '/fav-' 前缀
+			if (favSlug) {
+				url.pathname = '/fav.html';
+				url.searchParams.set('slug', favSlug);
+				return env.ASSETS.fetch(new Request(url.toString(), request));
+			}
+		}
 
 		// 对于其他静态资源，直接从ASSETS绑定获取
 		if (pathname.startsWith('/css/') || pathname.startsWith('/js/') || pathname.startsWith('/assets/')) {

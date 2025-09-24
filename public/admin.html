@@ -9,7 +9,7 @@
     <script src="https://unpkg.com/feather-icons"></script>
 </head>
 <body>
-    <!-- 顶部工具栏 -->
+    <!-- 顶栏工具 -->
     <div class="top-toolbar">
         <div class="toolbar-branding">
             <div class="toolbar-title-container">
@@ -33,140 +33,127 @@
 
     <!-- 主要内容容器 -->
     <div class="main-content">
-
-
-        <!-- 主体内容 -->
-        <main class="admin-main">
-            <div class="container">
-                <!-- 页面导航 -->
-                <div class="admin-nav">
-                    <button class="admin-nav-btn active" data-page="site-management">
+        <div class="container">
+            <!-- 统计信息 -->
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-icon bg-blue">
                         <i data-feather="globe"></i>
-                        <span>站点管理</span>
-                    </button>
-                    <button class="admin-nav-btn" data-page="review-management">
-                        <i data-feather="message-square"></i>
-                        <span>评论管理</span>
-                    </button>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="siteCount">0</h3>
+                        <p>站点总数</p>
+                    </div>
                 </div>
-
-                <div class="admin-content">
-                    <!-- 站点管理页面 -->
-                    <div class="admin-page active" id="site-management-page">
-                        <div class="admin-page-header">
-                            <h2>站点列表</h2>
-                            <button id="addSiteBtn" class="btn-primary">
-                                <i data-feather="plus"></i>
-                                添加站点
-                            </button>
-                        </div>
-                        
-                        <div class="admin-section">
-                            <div class="site-grid" id="adminSiteGrid">
-                                <!-- 站点列表将通过JavaScript动态加载 -->
-                                <p class="empty-placeholder">暂无站点数据</p>
-                            </div>
-                        </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-green">
+                        <i data-feather="message-square"></i>
                     </div>
-
-                    <!-- 添加站点表单 -->
-                    <div class="admin-page" id="add-site-page">
-                        <div class="admin-page-header">
-                            <button id="backToSitesBtn" class="btn-secondary">
-                                <i data-feather="arrow-left"></i>
-                                返回
-                            </button>
-                            <h2>添加新站点</h2>
-                        </div>
-                        
-                        <div class="admin-section">
-                            <form id="siteForm">
-                                <div class="form-group">
-                                    <label for="siteUrl">站点地址 *</label>
-                                    <input type="url" id="siteUrl" name="siteUrl" required placeholder="https://example.com">
-                                </div>
-                                <div class="form-group">
-                                    <label for="siteReview">您的评价 *</label>
-                                    <textarea id="siteReview" name="siteReview" rows="4" placeholder="请在这里添加您对这个站点的评价..." required></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="siteTags">标签 (用逗号分隔)</label>
-                                    <input type="text" id="siteTags" name="siteTags" placeholder="例如: 设计,工具,开发">
-                                </div>
-                                <div class="form-group">
-                                    <label for="siteStatus">站点状态</label>
-                                    <select id="siteStatus" name="siteStatus">
-                                        <option value="public">公开</option>
-                                        <option value="private">私有</option>
-                                    </select>
-                                </div>
-                                <div class="form-actions">
-                                    <button type="button" id="cancelAddSiteBtn" class="btn-secondary">取消</button>
-                                    <button type="submit" class="btn-primary">添加站点</button>
-                                </div>
-                            </form>
-                        </div>
+                    <div class="stat-info">
+                        <h3 id="reviewCount">0</h3>
+                        <p>评论总数</p>
                     </div>
-
-                    <!-- 编辑站点表单 -->
-                    <div class="admin-page" id="edit-site-page">
-                        <div class="admin-page-header">
-                            <button id="backToSitesFromEditBtn" class="btn-secondary">
-                                <i data-feather="arrow-left"></i>
-                                返回
-                            </button>
-                            <h2>编辑站点</h2>
-                        </div>
-                        
-                        <div class="admin-section">
-                            <form id="editSiteForm">
-                                <input type="hidden" id="editSiteId">
-                                <div class="form-group">
-                                    <label for="editSiteUrl">站点地址 *</label>
-                                    <input type="url" id="editSiteUrl" name="editSiteUrl" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="editSiteReview">您的评价 *</label>
-                                    <textarea id="editSiteReview" name="editSiteReview" rows="4" required></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="editSiteTags">标签 (用逗号分隔)</label>
-                                    <input type="text" id="editSiteTags" name="editSiteTags">
-                                </div>
-                                <div class="form-group">
-                                    <label for="editSiteStatus">站点状态</label>
-                                    <select id="editSiteStatus" name="editSiteStatus">
-                                        <option value="public">公开</option>
-                                        <option value="private">私有</option>
-                                    </select>
-                                </div>
-                                <div class="form-actions">
-                                    <button type="button" id="cancelEditSiteBtn" class="btn-secondary">取消</button>
-                                    <button type="submit" class="btn-primary">保存更改</button>
-                                </div>
-                            </form>
-                        </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-orange">
+                        <i data-feather="folder"></i>
                     </div>
-
-                    <!-- 评论管理页面 -->
-                    <div class="admin-page" id="review-management-page">
-                        <div class="admin-page-header">
-                            <h2>评论列表</h2>
-                        </div>
-                        
-                        <div class="admin-section">
-                            <div class="reviews-grid" id="reviewsGrid">
-                                <!-- 评论列表将通过JavaScript动态加载 -->
-                                <p class="empty-placeholder">暂无评论数据</p>
-                            </div>
-                        </div>
+                    <div class="stat-info">
+                        <h3 id="favCount">0</h3>
+                        <p>收藏夹数</p>
                     </div>
-
                 </div>
             </div>
-        </main>
+            
+            <!-- 顶部导航 -->
+            <div class="admin-nav">
+                <button class="admin-page-btn active" data-page="sites">
+                    <i data-feather="globe"></i>
+                    <span>站点管理</span>
+                </button>
+                <button class="admin-page-btn" data-page="reviews">
+                    <i data-feather="message-square"></i>
+                    <span>评论管理</span>
+                </button>
+                <button class="admin-page-btn" data-page="favorites">
+                    <i data-feather="folder"></i>
+                    <span>收藏夹管理</span>
+                </button>
+            </div>
 
-        <!-- 页脚 -->
+            <!-- 主体内容 -->
+            <main class="admin-main">
+                <!-- 站点管理页面 -->
+                <div class="admin-page active" id="sitesPage">
+                    <div class="admin-page-header">
+                        <h2>站点列表</h2>
+                        <button id="addSiteBtn" class="btn btn-primary">
+                            <i data-feather="plus"></i>
+                            添加站点
+                        </button>
+                    </div>
+                    
+                    <div class="admin-section">
+                        <div class="items-grid" id="adminSiteGrid">
+                            <!-- 站点列表将通过JavaScript动态加载 -->
+                            <div class="empty-state">
+                                <i data-feather="globe" class="empty-icon"></i>
+                                <p>暂无站点数据</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 评论管理页面 -->
+                <div class="admin-page" id="reviewsPage">
+                    <div class="admin-page-header">
+                        <h2>评论列表</h2>
+                        <button id="addReviewBtn" class="btn btn-primary">
+                            <i data-feather="plus"></i>
+                            添加评论
+                        </button>
+                    </div>
+                    
+                    <div class="admin-section">
+                        <div class="items-grid" id="reviewsGrid">
+                            <!-- 评论列表将通过JavaScript动态加载 -->
+                            <div class="empty-state">
+                                <i data-feather="message-square" class="empty-icon"></i>
+                                <p>暂无评论数据</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 收藏夹管理页面 -->
+                <div class="admin-page" id="favoritesPage">
+                    <div class="admin-page-header">
+                        <h2>收藏夹列表</h2>
+                        <button id="addFavBtn" class="btn btn-primary">
+                            <i data-feather="plus"></i>
+                            新建收藏夹
+                        </button>
+                    </div>
+                    
+                    <div class="admin-section">
+                        <div class="info-box">
+                            <h3>使用说明</h3>
+                            <p>收藏夹创建后，用户可以通过 <code>/fav-别名</code> 的方式直接访问。</p>
+                            <p>例如：别名为 <code>design-tools</code> 的收藏夹，访问地址为 <code>/fav-design-tools</code></p>
+                        </div>
+                        
+                        <div class="items-grid" id="favoritesGrid">
+                            <!-- 收藏夹列表将通过JavaScript动态加载 -->
+                            <div class="empty-state">
+                                <i data-feather="folder" class="empty-icon"></i>
+                                <p>暂无收藏夹数据</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
         <footer class="site-footer">
             <div class="container">
                 <div class="footer-content">
@@ -181,73 +168,650 @@
         </footer>
     </div>
 
-    <!-- 脚本 -->
+    <!-- 添加/编辑站点模态框 -->
+    <div class="modal" id="siteModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 id="siteModalTitle">添加站点</h2>
+                <button class="modal-close" id="closeSiteModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="siteForm">
+                    <input type="hidden" id="siteId">
+                    <div class="form-group">
+                        <label for="siteName">站点名称</label>
+                        <input type="text" id="siteName" required placeholder="请输入站点名称">
+                    </div>
+                    <div class="form-group">
+                        <label for="siteUrl">站点URL</label>
+                        <input type="url" id="siteUrl" required placeholder="请输入站点URL">
+                    </div>
+                    <div class="form-group">
+                        <label for="siteTags">标签（多个标签用逗号分隔）</label>
+                        <input type="text" id="siteTags" placeholder="例如: 工具,设计,开发">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelSiteBtn">取消</button>
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加/编辑评论模态框 -->
+    <div class="modal" id="reviewModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 id="reviewModalTitle">添加评论</h2>
+                <button class="modal-close" id="closeReviewModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="reviewForm">
+                    <input type="hidden" id="reviewId">
+                    <div class="form-group">
+                        <label for="reviewSiteId">选择站点</label>
+                        <select id="reviewSiteId" required>
+                            <option value="">请选择站点</option>
+                            <!-- 站点选项将通过JavaScript动态加载 -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reviewContent">评论内容</label>
+                        <textarea id="reviewContent" required placeholder="请输入评论内容，支持Markdown语法"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelReviewBtn">取消</button>
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新建/编辑收藏夹模态框 -->
+    <div class="modal" id="favModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 id="favModalTitle">新建收藏夹</h2>
+                <button class="modal-close" id="closeFavModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="favForm">
+                    <input type="hidden" id="favId">
+                    <div class="form-group">
+                        <label for="favName">收藏夹名称</label>
+                        <input type="text" id="favName" required placeholder="请输入收藏夹名称">
+                    </div>
+                    <div class="form-group">
+                        <label for="favSlug">别名 (用于URL，仅限英文，20字符以内)</label>
+                        <input type="text" id="favSlug" required placeholder="例如: design-tools" maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label for="favDescription">描述（可选）</label>
+                        <textarea id="favDescription" placeholder="请输入收藏夹描述"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelFavBtn">取消</button>
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 收藏夹详情模态框 -->
+    <div class="modal" id="favDetailModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 id="favDetailTitle">收藏夹详情</h2>
+                <button class="modal-close" id="closeFavDetailModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="fav-detail-info">
+                    <p id="favDetailDescription"></p>
+                </div>
+                
+                <div class="form-group">
+                    <label>添加站点到收藏夹</label>
+                    <div class="search-box" style="margin-bottom: 10px;">
+                        <input type="text" id="siteSearchInput" placeholder="搜索站点名称或URL">
+                    </div>
+                    <div class="site-list" id="siteList">
+                        <!-- 站点列表将通过JavaScript动态加载 -->
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>已收藏站点</label>
+                    <div class="site-list" id="favSiteList">
+                        <!-- 已收藏站点列表将通过JavaScript动态加载 -->
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button class="btn btn-secondary" id="backToFavList">返回</button>
+                    <button class="btn btn-danger" id="deleteFavBtn">删除收藏夹</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="/js/admin.js"></script>
     <script>
         // 初始化 feather icons
         feather.replace();
         
-        // 页面初始化
+        // 页面切换功能
         document.addEventListener('DOMContentLoaded', function() {
-            // 返回首页功能
-            const backToMainBtn = document.getElementById('backToMainBtn');
-            if (backToMainBtn) {
-                backToMainBtn.addEventListener('click', function() {
-                    window.location.href = '/';
-                });
-            }
-            
-            // 管理页面切换
-            const navButtons = document.querySelectorAll('.admin-nav-btn');
+            const pageButtons = document.querySelectorAll('.admin-page-btn');
             const pages = document.querySelectorAll('.admin-page');
             
-            navButtons.forEach(button => {
+            pageButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    const targetPage = this.getAttribute('data-page');
+                    const page = this.getAttribute('data-page');
                     
                     // 更新按钮状态
-                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    pageButtons.forEach(btn => btn.classList.remove('active'));
                     this.classList.add('active');
                     
-                    // 显示目标页面
-                    pages.forEach(page => {
-                        page.classList.remove('active');
-                        if (page.id === targetPage + '-page') {
-                            page.classList.add('active');
-                        }
-                    });
+                    // 显示对应页面
+                    pages.forEach(p => p.classList.remove('active'));
+                    document.getElementById(page + 'Page').classList.add('active');
+                    
+                    // 当切换到收藏夹页面时，渲染收藏夹列表
+                    if (page === 'favorites') {
+                        renderFavorites();
+                    }
+                    
+                    // 当切换到站点页面时，渲染站点列表
+                    if (page === 'sites') {
+                        renderSites();
+                    }
+                    
+                    // 当切换到评论页面时，渲染评论列表
+                    if (page === 'reviews') {
+                        renderReviews();
+                    }
                 });
             });
             
-            // 添加站点按钮
-            const addSiteBtn = document.getElementById('addSiteBtn');
-            if (addSiteBtn) {
-                addSiteBtn.addEventListener('click', function() {
-                    // 隐藏站点列表页面
-                    document.getElementById('site-management-page').classList.remove('active');
-                    // 显示添加站点页面
-                    document.getElementById('add-site-page').classList.add('active');
+            // 初始化渲染
+            renderSites();
+            renderReviews();
+            renderFavorites();
+            updateStats();
+        });
+        
+        // 收藏夹数据示例（实际项目中会从API获取）
+        const sampleFavorites = [
+            {
+                id: 1,
+                name: "设计工具",
+                slug: "design-tools",
+                description: "收集常用的设计工具和资源",
+                sites: [
+                    {id: 1, name: "Remove.bg", url: "https://www.remove.bg"},
+                    {id: 3, name: "Coolors", url: "https://coolors.co"}
+                ]
+            },
+            {
+                id: 2,
+                name: "开发资源",
+                slug: "dev-resources",
+                description: "常用的开发工具和文档",
+                sites: [
+                    {id: 2, name: "GitHub", url: "https://github.com"}
+                ]
+            }
+        ];
+        
+        // 站点数据示例（实际项目中会从API获取）
+        const sampleSites = [
+            {
+                id: 1,
+                name: "Remove.bg",
+                url: "https://www.remove.bg"
+            },
+            {
+                id: 2,
+                name: "GitHub",
+                url: "https://github.com"
+            },
+            {
+                id: 3,
+                name: "Coolors",
+                url: "https://coolors.co"
+            },
+            {
+                id: 4,
+                name: "本地NAS",
+                url: "http://192.168.1.100:5000"
+            }
+        ];
+        
+        // 评论数据示例（实际项目中会从API获取）
+        const sampleReviews = [
+            {
+                id: 1,
+                siteId: 1,
+                content: "非常好用的在线抠图工具，处理效果自然。",
+                updatedAt: "2025-09-01T10:00:00Z"
+            },
+            {
+                id: 2,
+                siteId: 2,
+                content: "代码托管平台，功能强大。",
+                updatedAt: "2025-08-20T09:15:00Z"
+            }
+        ];
+        
+        // 更新统计数据
+        function updateStats() {
+            document.getElementById('siteCount').textContent = sampleSites.length;
+            document.getElementById('reviewCount').textContent = sampleReviews.length;
+            document.getElementById('favCount').textContent = sampleFavorites.length;
+        }
+        
+        // 渲染站点列表
+        function renderSites() {
+            const siteGrid = document.getElementById('adminSiteGrid');
+            siteGrid.innerHTML = '';
+            
+            if (sampleSites.length === 0) {
+                siteGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i data-feather="globe" class="empty-icon"></i>
+                        <p>暂无站点数据</p>
+                    </div>
+                `;
+                feather.replace();
+                return;
+            }
+            
+            sampleSites.forEach(site => {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                card.innerHTML = `
+                    <div class="item-card-content">
+                        <div class="item-card-header">
+                            <div class="item-icon bg-blue">
+                                <i data-feather="globe"></i>
+                            </div>
+                            <div class="item-info">
+                                <h3 class="item-title">${site.name}</h3>
+                                <p class="item-url"><a href="${site.url}" target="_blank">${site.url}</a></p>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="icon-button edit-btn" onclick="editSite(${site.id})" title="编辑">
+                                <i data-feather="edit"></i>
+                            </button>
+                            <button class="icon-button delete-btn" onclick="deleteSite(${site.id})" title="删除">
+                                <i data-feather="trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                siteGrid.appendChild(card);
+            });
+            
+            feather.replace();
+            updateStats();
+        }
+        
+        // 渲染评论列表
+        function renderReviews() {
+            const reviewsGrid = document.getElementById('reviewsGrid');
+            reviewsGrid.innerHTML = '';
+            
+            if (sampleReviews.length === 0) {
+                reviewsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i data-feather="message-square" class="empty-icon"></i>
+                        <p>暂无评论数据</p>
+                    </div>
+                `;
+                feather.replace();
+                return;
+            }
+            
+            sampleReviews.forEach(review => {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                
+                // 查找对应的站点名称
+                const site = sampleSites.find(s => s.id === review.siteId);
+                const siteName = site ? site.name : '未知站点';
+                
+                card.innerHTML = `
+                    <div class="item-card-content">
+                        <div class="item-card-header">
+                            <div class="item-icon bg-green">
+                                <i data-feather="message-square"></i>
+                            </div>
+                            <div class="item-info">
+                                <h3 class="item-title">${siteName}</h3>
+                                <p class="item-content">${review.content.substring(0, 50)}${review.content.length > 50 ? '...' : ''}</p>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="icon-button edit-btn" onclick="editReview(${review.id})" title="编辑">
+                                <i data-feather="edit"></i>
+                            </button>
+                            <button class="icon-button delete-btn" onclick="deleteReview(${review.id})" title="删除">
+                                <i data-feather="trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                reviewsGrid.appendChild(card);
+            });
+            
+            feather.replace();
+            updateStats();
+        }
+        
+        // 渲染收藏夹列表
+        function renderFavorites() {
+            const favoritesGrid = document.getElementById('favoritesGrid');
+            favoritesGrid.innerHTML = '';
+            
+            if (sampleFavorites.length === 0) {
+                favoritesGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i data-feather="folder" class="empty-icon"></i>
+                        <p>暂无收藏夹数据</p>
+                    </div>
+                `;
+                feather.replace();
+                return;
+            }
+            
+            sampleFavorites.forEach(fav => {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                
+                card.innerHTML = `
+                    <div class="item-card-content">
+                        <div class="item-card-header">
+                            <div class="item-icon bg-orange">
+                                <i data-feather="folder"></i>
+                            </div>
+                            <div class="item-info">
+                                <h3 class="item-title">${fav.name}</h3>
+                                <p class="item-url"><a href="/fav-${fav.slug}" target="_blank">/fav-${fav.slug}</a></p>
+                                <p class="item-description">${fav.description || '暂无描述'}</p>
+                            </div>
+                        </div>
+                        <div class="item-stats">
+                            包含 ${fav.sites.length} 个站点
+                        </div>
+                        <div class="item-actions">
+                            <button class="icon-button detail-btn" onclick="showFavDetails(${fav.id})" title="详情">
+                                <i data-feather="info"></i>
+                            </button>
+                            <button class="icon-button edit-btn" onclick="editFav(${fav.id})" title="编辑">
+                                <i data-feather="edit"></i>
+                            </button>
+                            <button class="icon-button delete-btn" onclick="deleteFav(${fav.id})" title="删除">
+                                <i data-feather="trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                favoritesGrid.appendChild(card);
+            });
+            
+            feather.replace();
+            updateStats();
+        }
+        
+        // 编辑站点
+        function editSite(siteId) {
+            // 实现编辑站点逻辑
+            alert('编辑站点功能待实现，站点ID: ' + siteId);
+        }
+        
+        // 删除站点
+        function deleteSite(siteId) {
+            // 实现删除站点逻辑
+            alert('删除站点功能待实现，站点ID: ' + siteId);
+        }
+        
+        // 编辑评论
+        function editReview(reviewId) {
+            // 实现编辑评论逻辑
+            alert('编辑评论功能待实现，评论ID: ' + reviewId);
+        }
+        
+        // 删除评论
+        function deleteReview(reviewId) {
+            // 实现删除评论逻辑
+            alert('删除评论功能待实现，评论ID: ' + reviewId);
+        }
+        
+        // 显示新建收藏夹模态框
+        document.getElementById('addFavBtn').addEventListener('click', function() {
+            document.getElementById('favModalTitle').textContent = '新建收藏夹';
+            document.getElementById('favId').value = '';
+            document.getElementById('favName').value = '';
+            document.getElementById('favSlug').value = '';
+            document.getElementById('favDescription').value = '';
+            document.getElementById('favModal').classList.add('show');
+        });
+        
+        // 关闭模态框
+        document.getElementById('closeFavModal').addEventListener('click', function() {
+            document.getElementById('favModal').classList.remove('show');
+        });
+        
+        document.getElementById('closeFavDetailModal').addEventListener('click', function() {
+            document.getElementById('favDetailModal').classList.remove('show');
+        });
+        
+        document.getElementById('cancelFavBtn').addEventListener('click', function() {
+            document.getElementById('favModal').classList.remove('show');
+        });
+        
+        document.getElementById('backToFavList').addEventListener('click', function() {
+            document.getElementById('favDetailModal').classList.remove('show');
+        });
+        
+        // 表单提交事件
+        document.getElementById('favForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // 这里应该添加保存逻辑
+            const id = document.getElementById('favId').value;
+            const name = document.getElementById('favName').value;
+            const slug = document.getElementById('favSlug').value;
+            const description = document.getElementById('favDescription').value;
+            
+            if (id) {
+                // 编辑现有收藏夹
+                const fav = sampleFavorites.find(f => f.id == id);
+                if (fav) {
+                    fav.name = name;
+                    fav.slug = slug;
+                    fav.description = description;
+                }
+            } else {
+                // 添加新收藏夹
+                const newFav = {
+                    id: Date.now(), // 简单的ID生成方式
+                    name: name,
+                    slug: slug,
+                    description: description,
+                    sites: []
+                };
+                sampleFavorites.push(newFav);
+            }
+            
+            document.getElementById('favModal').classList.remove('show');
+            renderFavorites(); // 重新渲染
+        });
+        
+        // 显示收藏夹详情
+        function showFavDetails(favId) {
+            const fav = sampleFavorites.find(f => f.id === favId);
+            if (!fav) return;
+            
+            document.getElementById('favDetailTitle').textContent = fav.name;
+            document.getElementById('favDetailDescription').textContent = fav.description || '暂无描述';
+            
+            // 渲染已收藏站点列表
+            const favSiteList = document.getElementById('favSiteList');
+            favSiteList.innerHTML = '';
+            
+            if (fav.sites.length === 0) {
+                favSiteList.innerHTML = '<p>该收藏夹暂无站点</p>';
+            } else {
+                fav.sites.forEach(site => {
+                    const siteItem = document.createElement('div');
+                    siteItem.className = 'site-item';
+                    siteItem.innerHTML = `
+                        <div class="site-item-info">
+                            <div class="site-item-name">${site.name}</div>
+                            <div class="site-item-url">${site.url}</div>
+                        </div>
+                        <button class="icon-button remove-btn" onclick="removeSiteFromFav(${favId}, ${site.id})" title="移除">
+                            <i data-feather="x"></i>
+                        </button>
+                    `;
+                    favSiteList.appendChild(siteItem);
                 });
             }
             
-            // 返回站点列表按钮
-            const backToSitesBtn = document.getElementById('backToSitesBtn');
-            const backToSitesFromEditBtn = document.getElementById('backToSitesFromEditBtn');
-            const cancelAddSiteBtn = document.getElementById('cancelAddSiteBtn');
-            const cancelEditSiteBtn = document.getElementById('cancelEditSiteBtn');
+            // 渲染站点搜索列表
+            renderSiteSearchList(favId);
             
-            [backToSitesBtn, backToSitesFromEditBtn, cancelAddSiteBtn, cancelEditSiteBtn].forEach(btn => {
-                if (btn) {
-                    btn.addEventListener('click', function() {
-                        // 隐藏当前页面
-                        document.querySelector('.admin-page.active').classList.remove('active');
-                        // 显示站点列表页面
-                        document.getElementById('site-management-page').classList.add('active');
-                        // 激活站点管理导航按钮
-                        navButtons.forEach(btn => btn.classList.remove('active'));
-                        document.querySelector('.admin-nav-btn[data-page="site-management"]').classList.add('active');
-                    });
+            document.getElementById('favDetailModal').classList.add('show');
+            feather.replace();
+        }
+        
+        // 渲染站点搜索列表
+        function renderSiteSearchList(favId) {
+            const siteList = document.getElementById('siteList');
+            siteList.innerHTML = '';
+            
+            if (sampleSites.length === 0) {
+                siteList.innerHTML = '<p>暂无站点可添加</p>';
+                return;
+            }
+            
+            sampleSites.forEach(site => {
+                // 检查站点是否已在收藏夹中
+                const fav = sampleFavorites.find(f => f.id === favId);
+                const isAdded = fav && fav.sites.some(s => s.id === site.id);
+                
+                const siteItem = document.createElement('div');
+                siteItem.className = 'site-item';
+                siteItem.innerHTML = `
+                    <div class="site-item-info">
+                        <div class="site-item-name">${site.name}</div>
+                        <div class="site-item-url">${site.url}</div>
+                    </div>
+                    <button class="icon-button add-btn" onclick="addSiteToFav(${favId}, ${site.id})" title="添加" ${isAdded ? 'disabled' : ''}>
+                        <i data-feather="plus"></i>
+                    </button>
+                `;
+                siteList.appendChild(siteItem);
+            });
+            
+            feather.replace();
+        }
+        
+        // 编辑收藏夹
+        function editFav(favId) {
+            const fav = sampleFavorites.find(f => f.id === favId);
+            if (!fav) return;
+            
+            document.getElementById('favModalTitle').textContent = '编辑收藏夹';
+            document.getElementById('favId').value = fav.id;
+            document.getElementById('favName').value = fav.name;
+            document.getElementById('favSlug').value = fav.slug;
+            document.getElementById('favDescription').value = fav.description || '';
+            document.getElementById('favModal').classList.add('show');
+        }
+        
+        // 删除收藏夹
+        function deleteFav(favId) {
+            if (confirm('确定要删除这个收藏夹吗？')) {
+                const index = sampleFavorites.findIndex(f => f.id === favId);
+                if (index !== -1) {
+                    sampleFavorites.splice(index, 1);
+                    renderFavorites();
                 }
+            }
+        }
+        
+        // 添加站点到收藏夹
+        function addSiteToFav(favId, siteId) {
+            const fav = sampleFavorites.find(f => f.id === favId);
+            const site = sampleSites.find(s => s.id === siteId);
+            
+            if (fav && site && !fav.sites.some(s => s.id === siteId)) {
+                fav.sites.push({...site}); // 添加站点副本
+                showFavDetails(favId); // 重新渲染详情
+            }
+        }
+        
+        // 从收藏夹移除站点
+        function removeSiteFromFav(favId, siteId) {
+            const fav = sampleFavorites.find(f => f.id === favId);
+            if (fav) {
+                fav.sites = fav.sites.filter(s => s.id !== siteId);
+                showFavDetails(favId); // 重新渲染详情
+            }
+        }
+        
+        // 站点管理按钮事件
+        document.getElementById('addSiteBtn').addEventListener('click', function() {
+            document.getElementById('siteModal').classList.add('show');
+            document.getElementById('siteModalTitle').textContent = '添加站点';
+        });
+        
+        document.getElementById('closeSiteModal').addEventListener('click', function() {
+            document.getElementById('siteModal').classList.remove('show');
+        });
+        
+        document.getElementById('cancelSiteBtn').addEventListener('click', function() {
+            document.getElementById('siteModal').classList.remove('show');
+        });
+        
+        // 评论管理按钮事件
+        document.getElementById('addReviewBtn').addEventListener('click', function() {
+            // 填充站点选择下拉框
+            const siteSelect = document.getElementById('reviewSiteId');
+            siteSelect.innerHTML = '<option value="">请选择站点</option>';
+            
+            sampleSites.forEach(site => {
+                const option = document.createElement('option');
+                option.value = site.id;
+                option.textContent = site.name;
+                siteSelect.appendChild(option);
+            });
+            
+            document.getElementById('reviewModal').classList.add('show');
+            document.getElementById('reviewModalTitle').textContent = '添加评论';
+        });
+        
+        document.getElementById('closeReviewModal').addEventListener('click', function() {
+            document.getElementById('reviewModal').classList.remove('show');
+        });
+        
+        document.getElementById('cancelReviewBtn').addEventListener('click', function() {
+            document.getElementById('reviewModal').classList.remove('show');
+        });
+        
+        // 模态框外部点击关闭
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function() {
+                this.parentElement.classList.remove('show');
             });
         });
     </script>

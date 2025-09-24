@@ -651,8 +651,8 @@ function copyText(textarea) {
     const originalBackground = textarea.style.backgroundColor;
     const originalTransition = textarea.style.transition;
     textarea.style.transition = 'background-color 0.3s ease';
-    textarea.style.backgroundColor = '#ffffff'; // 使用更美观的浅蓝色替代绿色
-    textarea.style.boxShadow = '0 0 8px rgba(255, 255, 255, 0.19)'; // 添加蓝色光晕效果
+    textarea.style.backgroundColor = '#e3f2fd'; // 使用更美观的浅蓝色替代绿色
+    textarea.style.boxShadow = '0 0 8px rgba(33, 150, 243, 0.3)'; // 添加蓝色光晕效果
     
     setTimeout(() => {
         textarea.style.backgroundColor = originalBackground;

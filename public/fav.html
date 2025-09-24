@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收藏夹详情 - Navo</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+    <!-- 顶栏工具 -->
+    <div class="top-toolbar">
+        <div class="toolbar-branding">
+            <div class="toolbar-title-container">
+                <h1 class="toolbar-title">Navo</h1>
+                <p class="toolbar-description">以用户评价为核心的轻量化导航站</p>
+            </div>
+        </div>
+        <div class="admin-button-container">
+            <button class="admin-btn" id="homeBtn" title="首页">
+                <i data-feather="home"></i>
+            </button>
+            <button class="admin-btn" id="adminBtn" title="管理">
+                <i data-feather="settings"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="site-branding">
+                <h1 class="site-title" id="favName">收藏夹名称</h1>
+                <p class="site-description" id="favDescription">收藏夹描述</p>
+            </div>
+            
+            <main class="site-main">
+                <div class="site-grid" id="sitesGrid">
+                    <!-- 收藏夹中的站点将通过JavaScript动态加载 -->
+                </div>
+            </main>
+        </div>
+
+        <footer class="site-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-links">
+                        <span class="footer-item">项目支持：<a href="https://github.com/MindMobius" target="_blank" class="github-link"><i
+                                    data-feather="github"></i> MindMobius</a></span>
+                        <span class="footer-item">仓库地址：<a href="https://github.com/MindMobius/navo" target="_blank" class="github-link"><i
+                                    data-feather="github"></i> navo</a></span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // 初始化 feather icons
+        feather.replace();
+        
+        // 页面切换按钮
+        document.getElementById('homeBtn').addEventListener('click', function() {
+            window.location.href = '/';
+        });
+        
+        document.getElementById('adminBtn').addEventListener('click', function() {
+            window.location.href = '/admin.html';
+        });
+        
+        // 收藏夹数据示例（实际项目中会从API获取）
+        const sampleFavorites = [
+            {
+                id: 1,
+                name: "设计工具",
+                slug: "design-tools",
+                description: "收集常用的设计工具和资源",
+                sites: [
+                    {
+                        id: 1,
+                        name: "Remove.bg",
+                        url: "https://www.remove.bg",
+                        reviews: [
+                            {
+                                content: "一个非常好用的**在线抠图工具**，能快速移除图片背景，支持透明背景下载。\n\n- 处理速度快\n- 效果自然\n- 支持多种格式",
+                                updatedAt: "2025-09-01T10:00:00Z"
+                            }
+                        ],
+                        tags: ["图片处理", "设计", "AI工具"],
+                        createdAt: "2025-09-01T08:00:00Z",
+                        updatedAt: "2025-09-02T14:30:00Z"
+                    },
+                    {
+                        id: 3,
+                        name: "Coolors",
+                        url: "https://coolors.co",
+                        reviews: [
+                            {
+                                content: "优秀的配色方案生成工具，可以快速生成和谐的配色方案，支持锁定颜色。",
+                                updatedAt: "2025-09-05T11:20:00Z"
+                            }
+                        ],
+                        tags: ["设计", "配色", "灵感"],
+                        createdAt: "2025-09-05T11:00:00Z",
+                        updatedAt: "2025-09-07T09:30:00Z"
+                    }
+                ]
+            },
+            {
+                id: 2,
+                name: "开发资源",
+                slug: "dev-resources",
+                description: "常用的开发工具和文档",
+                sites: [
+                    {
+                        id: 2,
+                        name: "GitHub",
+                        url: "https://github.com",
+                        reviews: [
+                            {
+                                content: "全球最大的代码托管平台，支持Git版本控制，可以托管代码、管理项目。\n\n支持的功能：\n1. 代码托管\n2. 版本控制\n3. 协作开发",
+                                updatedAt: "2025-08-20T09:15:00Z"
+                            }
+                        ],
+                        tags: ["开发", "代码托管"],
+                        createdAt: "2025-08-20T09:00:00Z",
+                        updatedAt: "2025-08-20T09:15:00Z"
+                    }
+                ]
+            }
+        ];
+        
+        // 渲染站点卡片
+        function renderSites(sites) {
+            const siteGrid = document.getElementById('sitesGrid');
+            siteGrid.innerHTML = '';
+            
+            sites.forEach(site => {
+                const card = document.createElement('div');
+                card.className = 'site-card';
+                
+                // 获取网站图标（这里使用网站URL的favicon）
+                const siteUrl = new URL(site.url);
+                const siteIcon = `https://www.google.com/s2/favicons?domain=${siteUrl.hostname}`;
+                
+                // 截断长文本
+                const truncateText = (text, maxLength) => {
+                    if (text.length <= maxLength) {
+                        return text;
+                    }
+                    return text.substring(0, maxLength) + '...';
+                };
+                
+                card.innerHTML = `
+                    <div class="site-card-info">
+                        <div class="site-card-name" title="${site.name}">
+                            <img src="${siteIcon}" alt="${site.name}" class="site-icon" onerror="this.style.display='none'">
+                            ${truncateText(site.name, 20)}
+                        </div>
+                        <a class="site-card-url" href="${site.url}" target="_blank" title="${site.url}">
+                            <i data-feather="external-link" class="url-icon"></i>
+                            ${truncateText(site.url, 40)}
+                        </a>
+                    </div>
+                    <div class="site-card-actions">
+                        <button class="action-btn detail-btn" onclick="showSiteDetails(${site.id}); event.stopPropagation();" title="详情">
+                            <i data-feather="info"></i>
+                        </button>
+                    </div>
+                    <div class="site-card-reviews">
+                        <div class="review-content">
+                            ${site.reviews[0]?.content || '暂无评论'}
+                        </div>
+                    </div>
+                `;
+                siteGrid.appendChild(card);
+            });
+            
+            // 重新渲染feather图标
+            feather.replace();
+        }
+        
+        // 显示站点详情
+        function showSiteDetails(siteId) {
+            const site = sampleSites.find(s => s.id === siteId);
+            if (!site) return;
+            
+            alert(`站点详情：\n名称: ${site.name}\nURL: ${site.url}\n标签: ${site.tags.join(', ')}`);
+        }
+        
+        // 解析URL获取收藏夹别名并加载数据
+        document.addEventListener('DOMContentLoaded', function() {
+            // 从查询参数获取收藏夹别名
+            const urlParams = new URLSearchParams(window.location.search);
+            const favSlug = urlParams.get('slug');
+            
+            // 根据别名查找收藏夹
+            const fav = sampleFavorites.find(f => f.slug === favSlug);
+            
+            if (fav) {
+                // 设置页面标题和描述
+                document.getElementById('favName').textContent = fav.name;
+                document.getElementById('favDescription').textContent = fav.description || '暂无描述';
+                
+                // 渲染站点
+                renderSites(fav.sites);
+            } else {
+                // 未找到收藏夹
+                document.getElementById('favName').textContent = '未找到收藏夹';
+                document.getElementById('favDescription').textContent = `未找到别名为"${favSlug}"的收藏夹`;
+            }
+        });
+    </script>
+</body>
+</html>

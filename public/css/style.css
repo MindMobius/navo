@@ -1217,3 +1217,40 @@ body {
         font-size: 14px;
     }
 }
+
+.fav-detail-info {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e1e5e9;
+}
+
+.fav-detail-info p {
+    color: #5f6368;
+    line-height: 1.6;
+}
+
+/* 信息框样式 */
+.info-box {
+    background-color: #f0f8ff;
+    border: 1px solid #cce6ff;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.info-box h3 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+
+.info-box p {
+    margin: 10px 0;
+    color: #5f6368;
+}
+
+.info-box code {
+    background-color: #eef7ff;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: monospace;
+}

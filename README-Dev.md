@@ -28,6 +28,7 @@
 ### 收藏夹表 (favorites)
 - id: INTEGER PRIMARY KEY AUTOINCREMENT - 自增主键
 - name: TEXT NOT NULL - 收藏夹名称
+- slug: TEXT - 别名
 - token: TEXT NOT NULL - 授权令牌
 - created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP - 创建时间
 - updated_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP - 更新时间
