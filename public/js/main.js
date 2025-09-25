@@ -1,95 +1,60 @@
-// 站点数据示例（实际项目中会从API获取）
-const sampleSites = [
-    {
-        id: 1,
-        suid: "abc123",
-        name: "Remove.bg",
-        url: "https://www.remove.bg",
-        reviews: [
-            {
-                content: "一个非常好用的**在线抠图工具**，能快速移除图片背景，支持透明背景下载。\n\n- 处理速度快\n- 效果自然\n- 支持多种格式",
-                updatedAt: "2025-09-01T10:00:00Z"
-            },
-            {
-                content: "处理效果很棒，特别是对于头发丝的处理很自然，比其他免费工具好用多了。这个工具真的帮我节省了很多时间。\n\n> 强烈推荐设计师使用",
-                updatedAt: "2025-09-02T14:30:00Z"
-            }
-        ],
-        tags: ["图片处理", "设计", "AI工具"],
-        createdAt: "2025-09-01T08:00:00Z",
-        updatedAt: "2025-09-02T14:30:00Z"
-    },
-    {
-        id: 2,
-        suid: "def456",
-        name: "GitHub",
-        url: "https://github.com",
-        reviews: [
-            {
-                content: "全球最大的代码托管平台，支持Git版本控制，可以托管代码、管理项目。\n\n支持的功能：\n1. 代码托管\n2. 版本控制\n3. 协作开发",
-                updatedAt: "2025-08-20T09:15:00Z"
-            }
-        ],
-        tags: ["开发", "代码托管"],
-        createdAt: "2025-08-20T09:00:00Z",
-        updatedAt: "2025-08-20T09:15:00Z"
-    },
-    {
-        id: 3,
-        suid: "ghi789",
-        name: "Coolors",
-        url: "https://coolors.co",
-        reviews: [
-            {
-                content: "优秀的配色方案生成工具，可以快速生成和谐的配色方案，支持锁定颜色。\n\n```js\n// 示例代码\nconst colors = generatePalette();\nconsole.log(colors);\n```",
-                updatedAt: "2025-09-05T11:20:00Z"
-            },
-            {
-                content: "我每天都会用这个工具来寻找灵感，界面简洁，功能强大。",
-                updatedAt: "2025-09-06T16:45:00Z"
-            },
-            {
-                content: "特别喜欢它的导出功能，可以导出多种格式，非常方便。\n\n支持的格式包括：\n- CSS\n- SCSS\n- JSON\n- SVG",
-                updatedAt: "2025-09-07T09:30:00Z"
-            }
-        ],
-        tags: ["设计", "配色", "灵感"],
-        createdAt: "2025-09-05T11:00:00Z",
-        updatedAt: "2025-09-07T09:30:00Z"
-    },
-    {
-        id: 4,
-        suid: "jkl012",
-        name: "本地NAS",
-        url: "http://192.168.1.100:5000",
-        reviews: [
-            {
-                content: "个人NAS管理面板，可以管理文件、下载任务、媒体服务等。\n\n支持的协议：\n- SMB\n- AFP\n- FTP\n- WebDAV",
-                updatedAt: "2025-07-15T13:10:00Z"
-            }
-        ],
-        tags: ["私有服务", "NAS"],
-        createdAt: "2025-07-15T13:00:00Z",
-        updatedAt: "2025-07-15T13:10:00Z"
-    },
-    {
-        id: 5,
-        suid: "mno345",
-        name: "OneDrivesahidshaihdiashdiashdiahdiashdiashdiashdiashdiahsdiashi",
-        url: "https://onedrive.live.com/asdhjasdhssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
-        reviews: [
-            {
-                content: "微软的云存储服务，可以保存、同步文件和图片。\n\n支持的协议：\n- SMB\n- AFP\n- FTP\n- WebDAV",
-                updatedAt: "2025-08-10T09:30:"
-            }
-        ],
-        tags: ["云存储", "私有服务"],
-        createdAt: "2025-08-10T09:00:00Z",
-        updatedAt: "2025-08-10T09:30:00Z"
+// 从API获取站点数据而不是使用示例数据
+let sitesData = [];
 
+// 获取站点数据
+async function fetchSites() {
+    try {
+        const response = await fetch('/api/sites');
+        if (response.ok) {
+            sitesData = await response.json();
+            // 处理数据格式，确保reviews字段存在
+            sitesData = sitesData.map(site => ({
+                ...site,
+                reviews: [] // 初始时评论为空，稍后获取
+            }));
+            return sitesData;
+        } else {
+            console.error('获取站点数据失败:', response.status);
+            return [];
+        }
+    } catch (error) {
+        console.error('获取站点数据时出错:', error);
+        return [];
     }
+}
 
-];
+// 获取特定站点的评论
+async function fetchSiteReviews(suid) {
+    try {
+        const response = await fetch(`/api/reviews?suid=${suid}`);
+        if (response.ok) {
+            return await response.json();
+        } else {
+            console.error(`获取站点${suid}的评论失败:`, response.status);
+            return [];
+        }
+    } catch (error) {
+        console.error(`获取站点${suid}的评论时出错:`, error);
+        return [];
+    }
+}
+
+// 为所有站点获取评论
+async function fetchAllReviews() {
+    const reviewPromises = sitesData.map(site => 
+        fetchSiteReviews(site.suid).then(reviews => {
+            site.reviews = reviews;
+        })
+    );
+    await Promise.all(reviewPromises);
+}
+
+// 获取所有数据（站点和评论）
+async function fetchAllData() {
+    await fetchSites();
+    await fetchAllReviews();
+    return sitesData;
+}
 
 // 用于追踪每个站点当前显示的评论索引
 const siteReviewIndices = {};
@@ -116,9 +81,12 @@ function renderSites(sites) {
     const siteGrid = document.getElementById('siteGrid');
     siteGrid.innerHTML = '';
     
+    // 获取Mustache模板
+    const template = document.getElementById('site-card-template').innerHTML;
+    
     sites.forEach(site => {
         // 初始化当前站点的评论索引为随机索引
-        if (siteReviewIndices[site.id] === undefined) {
+        if (siteReviewIndices[site.id] === undefined && site.reviews.length > 0) {
             siteReviewIndices[site.id] = Math.floor(Math.random() * site.reviews.length);
         }
         
@@ -126,8 +94,8 @@ function renderSites(sites) {
         card.className = 'site-card';
         
         // 获取当前显示的评论
-        const currentReviewIndex = siteReviewIndices[site.id];
-        const currentReview = site.reviews[currentReviewIndex];
+        const currentReviewIndex = site.reviews.length > 0 ? siteReviewIndices[site.id] || 0 : 0;
+        const currentReview = site.reviews.length > 0 ? site.reviews[currentReviewIndex] : { content: "暂无评论" };
         
         // 获取网站图标（这里使用网站URL的favicon）
         const siteUrl = new URL(site.url);
@@ -141,31 +109,20 @@ function renderSites(sites) {
             return text.substring(0, maxLength) + '...';
         };
         
-        card.innerHTML = `
-            <div class="site-card-info">
-                <div class="site-card-name" title="${site.name}">
-                    <img src="${siteIcon}" alt="${site.name}" class="site-icon" onerror="this.style.display='none'">
-                    ${truncateText(site.name, 20)}
-                </div>
-                <a class="site-card-url" href="${site.url}" target="_blank" title="${site.url}">
-                    <i data-feather="external-link" class="url-icon"></i>
-                    ${truncateText(site.url, 40)}
-                </a>
-            </div>
-            <div class="site-card-actions">
-                <button class="action-btn detail-btn" onclick="showSiteDetails(${site.id}); event.stopPropagation();" title="详情">
-                    <i data-feather="info"></i>
-                </button>
-                <button class="action-btn comment-btn" onclick="showCommentModal(${site.id}); event.stopPropagation();" title="评论">
-                    <i data-feather="message-square"></i>
-                </button>
-            </div>
-            <div class="site-card-reviews">
-                <div class="review-content">
-                    ${renderMarkdown(currentReview.content)}
-                </div>
-            </div>
-        `;
+        // 准备模板数据
+        const templateData = {
+            id: site.id,
+            name: site.name,
+            url: site.url,
+            siteIcon: siteIcon,
+            truncatedName: truncateText(site.name, 20),
+            truncatedUrl: truncateText(site.url, 40),
+            reviewContent: renderMarkdown(currentReview.content),
+            reviewCount: site.review_count || 0
+        };
+        
+        // 使用Mustache模板渲染
+        card.innerHTML = Mustache.render(template, templateData);
         siteGrid.appendChild(card);
     });
     
@@ -175,7 +132,7 @@ function renderSites(sites) {
 
 // 显示站点详情
 function showSiteDetails(siteId) {
-    const site = sampleSites.find(s => s.id === siteId);
+    const site = sitesData.find(s => s.id === siteId);
     if (!site) return;
     
     const modal = document.createElement('div');
@@ -196,64 +153,22 @@ function showSiteDetails(siteId) {
         return text.substring(0, maxLength) + '...';
     };
     
-    // 构建评论列表HTML
-    const reviewsHtml = site.reviews.map(review => `
-        <div class="review-item">
-            <div class="review-item-header">
-                <span class="review-date">${formatDate(review.updatedAt)}</span>
-            </div>
-            <div class="review-content-full">${renderMarkdown(review.content)}</div>
-        </div>
-    `).join('');
+    // 获取站点详情模板
+    const template = document.getElementById('site-detail-template').innerHTML;
     
-    // 处理名称和URL的显示
-    const displayName = truncateText(site.name, 20);
-    const displayUrl = truncateText(site.url, 50);
+    // 准备模板数据
+    const templateData = {
+        id: site.id,
+        name: site.name,
+        suid: site.suid,
+        url: site.url,
+        created_at: formatDate(site.created_at),
+        updated_at: formatDate(site.updated_at),
+        truncatedName: truncateText(site.name, 25)
+    };
     
-    modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" title="${site.name}">${truncateText(site.name, 25)}</h2>
-                <button class="close" onclick="closeModal('detailModal')">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="site-detail-info">
-                    <dl>
-                        <dt>ID:</dt>
-                        <dd>${site.id}</dd>
-                        
-                        <dt>SUID:</dt>
-                        <dd>
-                            <div class="suid-copy-container">
-                                <div class="suid-value">${site.suid}</div>
-                                <button class="copy-suid-btn" onclick="copySuid('${site.suid}', this)">复制</button>
-                            </div>
-                        </dd>
-                        
-                        <dt>网站名称:</dt>
-                        <dd class="name-value">
-                            <textarea readonly onclick="copyText(this)" title="点击复制">${site.name}</textarea>
-                        </dd>
-                        
-                        <dt>网站地址:</dt>
-                        <dd class="url-value">
-                            <textarea readonly onclick="copyText(this)" title="点击复制">${site.url}</textarea>
-                        </dd>
-                        
-                        <dt>创建时间:</dt>
-                        <dd>${formatDate(site.createdAt)}</dd>
-                        
-                        <dt>更新时间:</dt>
-                        <dd>${formatDate(site.updatedAt)}</dd>
-                    </dl>
-                </div>
-                <div class="site-reviews-list">
-                    <h3>评论内容</h3>
-                    ${reviewsHtml}
-                </div>
-            </div>
-        </div>
-    `;
+    // 使用Mustache模板渲染
+    modal.innerHTML = Mustache.render(template, templateData);
     
     document.body.appendChild(modal);
     modal.style.display = 'block';
@@ -298,57 +213,87 @@ function copySuid(suid, button) {
 
 // 显示评论模态框
 function showCommentModal(siteId) {
-    const site = sampleSites.find(s => s.id === siteId);
+    const site = sitesData.find(s => s.id === siteId);
     if (!site) return;
     
     const modal = document.createElement('div');
     modal.className = 'modal comment-modal';
     modal.id = 'commentModal';
     
-    modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">为 ${site.name} 添加评论</h2>
-                <button class="close" onclick="closeModal('commentModal')">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="commentForm">
-                    <div class="form-group">
-                        <label for="commentContent">评论内容（支持Markdown语法）</label>
-                        <textarea id="commentContent" required placeholder="请输入评论内容，支持Markdown语法"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn-primary">提交评论</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    `;
+    // 格式化日期
+    const formatDate = (dateStr) => {
+        const date = new Date(dateStr);
+        return date.toLocaleString('zh-CN');
+    };
+    
+    // 获取评论模态框模板
+    const template = document.getElementById('comment-modal-template').innerHTML;
+    
+    // 准备评论数据
+    const reviews = site.reviews.map(review => ({
+        content: renderMarkdown(review.content),
+        created_at: formatDate(review.created_at || review.updated_at)
+    }));
+    
+    // 准备模板数据
+    const templateData = {
+        name: site.name,
+        hasReviews: site.reviews.length > 0,
+        reviews: reviews
+    };
+    
+    // 使用Mustache模板渲染
+    modal.innerHTML = Mustache.render(template, templateData);
     
     document.body.appendChild(modal);
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
     
     // 绑定表单提交事件
-    document.getElementById('commentForm').addEventListener('submit', function(e) {
+    document.getElementById('commentForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const content = document.getElementById('commentContent').value;
         
         if (content) {
-            // 添加新评论到站点
-            site.reviews.push({
-                content: content,
-                updatedAt: new Date().toISOString()
-            });
-            
-            // 关闭模态框
-            closeModal('commentModal');
-            
-            // 重新渲染站点卡片
-            renderSites(sampleSites);
-            
-            // 显示成功消息（简单alert，实际项目中可能需要更好的提示）
-            alert('评论添加成功！');
+            try {
+                // 获取API密钥
+                const apiKey = localStorage.getItem('navo_api_key');
+                
+                // 发送评论到服务器
+                const response = await fetch('/api/reviews', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        suid: site.suid,
+                        content: content
+                    })
+                });
+                
+                if (response.ok) {
+                    const newReview = await response.json();
+                    
+                    // 添加新评论到站点
+                    site.reviews.push(newReview);
+                    
+                    // 关闭模态框
+                    closeModal('commentModal');
+                    
+                    // 重新渲染站点卡片
+                    renderSites(sitesData);
+                    
+                    // 显示成功消息
+                    alert('评论添加成功！');
+                } else {
+                    const errorData = await response.json();
+                    alert(`评论添加失败: ${errorData.error}`);
+                }
+            } catch (error) {
+                console.error('添加评论时出错:', error);
+                alert('评论添加失败，请稍后重试');
+            }
         }
     });
     
@@ -375,19 +320,18 @@ function renderMarkdown(markdown) {
 // 搜索功能
 function searchSites(keyword) {
     if (!keyword) {
-        return sampleSites;
+        return sitesData;
     }
     
     // 添加到搜索历史
     addToSearchHistory(keyword);
     
-    return sampleSites.filter(site => 
+    return sitesData.filter(site => 
         site.name.toLowerCase().includes(keyword.toLowerCase()) ||
         site.url.toLowerCase().includes(keyword.toLowerCase()) ||
         site.reviews.some(review => 
             review.content.toLowerCase().includes(keyword.toLowerCase())
-        ) ||
-        (site.tags && site.tags.some(tag => tag.toLowerCase().includes(keyword.toLowerCase())))
+        )
     );
 }
 
@@ -497,7 +441,7 @@ function clearAllSearchHistory() {
     localStorage.setItem('navoSearchHistory', JSON.stringify(searchHistory));
     renderSearchHistory();
     // 重新渲染所有站点
-    renderSites(sampleSites);
+    renderSites(sitesData);
 }
 
 // 快捷搜索功能（现在改为搜索历史功能）
@@ -554,7 +498,7 @@ function setupResetButton() {
     if (resetBtn && searchInput) {
         resetBtn.addEventListener('click', function() {
             searchInput.value = '';
-            renderSites(sampleSites);
+            renderSites(sitesData);
             searchInput.focus();
         });
     }
@@ -589,9 +533,12 @@ function setupTopToolbar() {
 }
 
 // 初始化页面
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    // 获取所有数据
+    await fetchAllData();
+    
     // 渲染所有站点
-    renderSites(sampleSites);
+    renderSites(sitesData);
     
     // 设置快捷搜索
     setupQuickSearch();

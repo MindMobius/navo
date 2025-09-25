@@ -836,6 +836,15 @@ body {
     color: #6c757d;
 }
 
+.review-count {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    color: #888;
+    margin-top: 10px;
+    justify-content: flex-end;
+}
 
 /* 详情模态框样式 */
 .modal {

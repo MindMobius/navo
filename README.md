@@ -9,7 +9,7 @@ Navo 是一个基于 Cloudflare Workers 和 Hono 框架构建的轻量级网站�
 
 - **后端框架** - Cloudflare Workers + Hono
 - **数据库** - Cloudflare D1 SQLite 数据库
-- **前端界面** - 原生 HTML/CSS/JavaScript 实现
+- **前端界面** - 原生 HTML/CSS/JavaScript + Mustache 模板引擎实现
 - **部署方式** - 一键部署到 Cloudflare 平台
 
 ## 功能特性

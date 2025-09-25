@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mustache@latest/mustache.min.js"></script>
 </head>
 <body>
     <!-- 顶栏工具 -->
@@ -57,6 +58,112 @@
                 </div>
             </main>
         </div>
+
+        <!-- Mustache 模板用于站点卡片 -->
+        <script id="site-card-template" type="text/template">
+            <div class="site-card-info">
+                <div class="site-card-name" title="{{name}}">
+                    <img src="{{siteIcon}}" alt="{{name}}" class="site-icon" onerror="this.style.display='none'">
+                    {{truncatedName}}
+                </div>
+                <a class="site-card-url" href="{{url}}" target="_blank" title="{{url}}">
+                    <i data-feather="external-link" class="url-icon"></i>
+                    {{truncatedUrl}}
+                </a>
+            </div>
+            <div class="site-card-actions">
+                <button class="action-btn detail-btn" onclick="showSiteDetails({{id}}); event.stopPropagation();" title="详情">
+                    <i data-feather="info"></i>
+                </button>
+            </div>
+            <div class="site-card-reviews" onclick="showCommentModal({{id}}); event.stopPropagation();">
+                <div class="review-content">
+                    {{{reviewContent}}}
+                </div>
+                <div class="review-count">
+                    <span>{{reviewCount}} 条评论</span>
+                </div>
+            </div>
+        </script>
+
+        <!-- Mustache 模板用于站点详情模态框 -->
+        <script id="site-detail-template" type="text/template">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" title="{{name}}">{{truncatedName}}</h2>
+                    <button class="close" onclick="closeModal('detailModal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="site-detail-info">
+                        <dl>
+                            <dt>ID:</dt>
+                            <dd>{{id}}</dd>
+                            
+                            <dt>SUID:</dt>
+                            <dd>
+                                <div class="suid-copy-container">
+                                    <div class="suid-value">{{suid}}</div>
+                                    <button class="copy-suid-btn" onclick="copySuid('{{suid}}', this)">复制</button>
+                                </div>
+                            </dd>
+                            
+                            <dt>网站名称:</dt>
+                            <dd class="name-value">
+                                <textarea readonly onclick="copyText(this)" title="点击复制">{{name}}</textarea>
+                            </dd>
+                            
+                            <dt>网站地址:</dt>
+                            <dd class="url-value">
+                                <textarea readonly onclick="copyText(this)" title="点击复制">{{url}}</textarea>
+                            </dd>
+                            
+                            <dt>创建时间:</dt>
+                            <dd>{{created_at}}</dd>
+                            
+                            <dt>更新时间:</dt>
+                            <dd>{{updated_at}}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </script>
+
+        <!-- Mustache 模板用于评论模态框 -->
+        <script id="comment-modal-template" type="text/template">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">为 {{name}} 添加评论</h2>
+                    <button class="close" onclick="closeModal('commentModal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="commentForm">
+                        <div class="form-group">
+                            <label for="commentContent">评论内容</label>
+                            <textarea id="commentContent" required placeholder="请输入评论内容，支持Markdown语法"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">提交评论</button>
+                        </div>
+                    </form>
+                    <div class="site-reviews-list">
+                        <h3>评论内容</h3>
+                        {{#hasReviews}}
+                            {{#reviews}}
+                            <div class="review-item">
+                                <div class="review-item-header">
+                                    <span class="review-date">{{created_at}}</span>
+                                </div>
+                                <div class="review-content-full">{{{content}}}</div>
+                            </div>
+                            {{/reviews}}
+                        {{/hasReviews}}
+                        {{^hasReviews}}
+                            <p>暂无评论</p>
+                        {{/hasReviews}}
+                    </div>
+                </div>
+            </div>
+        </script>
 
         <footer class="site-footer">
             <div class="container">
