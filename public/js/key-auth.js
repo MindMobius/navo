@@ -255,32 +255,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 const isCurrentKey = currentApiKey === entry.apiKey;
                 
-                // 构建历史记录卡片的HTML
-                let historyCardHTML = '';
-                historyCardHTML += '<button class="delete-history-btn" data-index="' + index + '" title="删除记录">';
-                historyCardHTML += '<i data-feather="x"></i>';
-                historyCardHTML += '</button>';
+                // 使用Mustache模板渲染历史记录卡片
+                const template = document.getElementById('history-card-template').innerHTML;
+                const templateData = {
+                    index: index,
+                    string1: entry.string1,
+                    string2: entry.string2,
+                    apiKey: entry.apiKey,
+                    isCurrentKey: isCurrentKey
+                };
                 
-                historyCardHTML += '<div class="history-card-strings">';
-                historyCardHTML += '<div class="string-item">';
-                historyCardHTML += '<span class="string-label">na：</span>';
-                historyCardHTML += '<span class="string-value">' + entry.string1 + '</span>';
-                historyCardHTML += '</div>';
-                historyCardHTML += '<div class="string-item">';
-                historyCardHTML += '<span class="string-label">vo：</span>';
-                historyCardHTML += '<span class="string-value">' + entry.string2 + '</span>';
-                historyCardHTML += '</div>';
-                historyCardHTML += '</div>';
-                
-                historyCardHTML += '<div class="history-card-actions">';
-                if (isCurrentKey) {
-                    historyCardHTML += '<span class="current-tag">当前使用</span>';
-                } else {
-                    historyCardHTML += '<button class="use-key-btn" data-key="' + entry.apiKey + '" data-string1="' + entry.string1 + '" data-string2="' + entry.string2 + '">使用</button>';
-                }
-                historyCardHTML += '</div>';
-                
-                historyCard.innerHTML = historyCardHTML;
+                historyCard.innerHTML = Mustache.render(template, templateData);
                 keyHistoryGrid.appendChild(historyCard);
             });
             

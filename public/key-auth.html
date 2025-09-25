@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/key-auth.css">
     <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mustache@latest/mustache.min.js"></script>
 </head>
 <body>
     <!-- 顶栏工具 -->
@@ -176,6 +177,31 @@
             </div>
         </div>
     </div>
+
+    <!-- Mustache 模板用于历史记录卡片 -->
+    <script id="history-card-template" type="text/template">
+        <button class="delete-history-btn" data-index="{{index}}" title="删除记录">
+            <i data-feather="x"></i>
+        </button>
+        <div class="history-card-strings">
+            <div class="string-item">
+                <span class="string-label">na：</span>
+                <span class="string-value">{{string1}}</span>
+            </div>
+            <div class="string-item">
+                <span class="string-label">vo：</span>
+                <span class="string-value">{{string2}}</span>
+            </div>
+        </div>
+        <div class="history-card-actions">
+            {{#isCurrentKey}}
+                <span class="current-tag">当前使用</span>
+            {{/isCurrentKey}}
+            {{^isCurrentKey}}
+                <button class="use-key-btn" data-key="{{apiKey}}" data-string1="{{string1}}" data-string2="{{string2}}">使用</button>
+            {{/isCurrentKey}}
+        </div>
+    </script>
 
                     <footer class="site-footer">
                         <div class="container">
