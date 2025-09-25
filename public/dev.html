@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navo 开发调试界面</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <style>
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .section-title {
+            border-bottom: 2px solid #007cba;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            color: #007cba;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
+        }
+        td[contenteditable] {
+            cursor: pointer;
+            background-color: #f9f9f9;
+        }
+        td[contenteditable]:focus {
+            background-color: #fff8dc;
+            outline: 2px solid #007cba;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            padding: 10px 15px;
+            background-color: #007cba;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .btn:hover {
+            background-color: #005a87;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        .btn-success {
+            background-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+        }
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #ccc;
+        }
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+        .tabcontent.active {
+            display: block;
+        }
+        .editable-table {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .action-cell {
+            white-space: nowrap;
+        }
+        .status-actived {
+            color: green;
+            font-weight: bold;
+        }
+        .status-deleted {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Navo 开发调试界面</h1>
+        
+        <div class="tab">
+            <button class="tablinks active" onclick="openTab(event, 'database')">数据库管理</button>
+            <button class="tablinks" onclick="openTab(event, 'api')">API 测试</button>
+            <button class="tablinks" onclick="openTab(event, 'settings')">设置</button>
+        </div>
+
+        <div id="database" class="tabcontent active">
+            <div class="section">
+                <h2 class="section-title">站点表 (sites)</h2>
+                <button id="refreshSites" class="btn">刷新站点表</button>
+                <button id="addSiteRow" class="btn btn-success">添加新行</button>
+                <div class="editable-table">
+                    <table id="sitesTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>SUID</th>
+                                <th>Token</th>
+                                <th>名称</th>
+                                <th>URL</th>
+                                <th>图标</th>
+                                <th>状态</th>
+                                <th>创建时间</th>
+                                <th>更新时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">评论表 (reviews)</h2>
+                <button id="refreshReviews" class="btn">刷新评论表</button>
+                <button id="addReviewRow" class="btn btn-success">添加新行</button>
+                <div class="editable-table">
+                    <table id="reviewsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>站点 SUID</th>
+                                <th>Token</th>
+                                <th>内容</th>
+                                <th>创建时间</th>
+                                <th>更新时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="api" class="tabcontent">
+            <div class="section">
+                <h2 class="section-title">API 测试</h2>
+                <div class="form-group">
+                    <label for="apiEndpoint">API 端点:</label>
+                    <input type="text" id="apiEndpoint" placeholder="/api/sites">
+                </div>
+                <div class="form-group">
+                    <label for="apiMethod">请求方法:</label>
+                    <select id="apiMethod">
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="DELETE">DELETE</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="apiHeaders">请求头 (JSON格式):</label>
+                    <textarea id="apiHeaders" rows="3">{"Content-Type": "application/json"}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="apiBody">请求体 (JSON格式):</label>
+                    <textarea id="apiBody" rows="5"></textarea>
+                </div>
+                <button id="sendApiRequest" class="btn">发送请求</button>
+                <div class="form-group">
+                    <label for="apiResponse">响应:</label>
+                    <textarea id="apiResponse" rows="10" readonly></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings" class="tabcontent">
+            <div class="section">
+                <h2 class="section-title">开发设置</h2>
+                <div class="form-group">
+                    <label for="devToken">默认 Token:</label>
+                    <input type="text" id="devToken" value="test-token-1">
+                </div>
+                <button id="saveSettings" class="btn">保存设置</button>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">数据初始化</h2>
+                <button id="initData" class="btn btn-warning">初始化测试数据</button>
+                <button id="clearData" class="btn btn-danger">清空所有数据</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载完成后获取数据
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshSites();
+            refreshReviews();
+            
+            // 绑定事件
+            document.getElementById('refreshSites').addEventListener('click', refreshSites);
+            document.getElementById('refreshReviews').addEventListener('click', refreshReviews);
+            document.getElementById('addSiteRow').addEventListener('click', addSiteRow);
+            document.getElementById('addReviewRow').addEventListener('click', addReviewRow);
+            document.getElementById('sendApiRequest').addEventListener('click', sendApiRequest);
+            document.getElementById('saveSettings').addEventListener('click', saveSettings);
+            document.getElementById('initData').addEventListener('click', initData);
+            document.getElementById('clearData').addEventListener('click', clearData);
+            
+            // 从 localStorage 加载设置
+            loadSettings();
+        });
+        
+        // Tab 切换功能
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+        
+        // 刷新站点列表
+        function refreshSites() {
+            fetch('/api/sites/all')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector('#sitesTable tbody');
+                    tbody.innerHTML = '';
+                    
+                    data.forEach(site => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${site.id}</td>
+                            <td contenteditable="true" data-field="suid">${site.suid}</td>
+                            <td contenteditable="true" data-field="token">${site.token}</td>
+                            <td contenteditable="true" data-field="name">${site.name}</td>
+                            <td contenteditable="true" data-field="url">${site.url}</td>
+                            <td contenteditable="true" data-field="icon">${site.icon || ''}</td>
+                            <td contenteditable="true" data-field="status" class="status-${site.status}">${site.status}</td>
+                            <td>${new Date(site.created_at).toLocaleString()}</td>
+                            <td>${new Date(site.updated_at).toLocaleString()}</td>
+                            <td class="action-cell">
+                                <button onclick="saveSiteRow(${site.id}, this)" class="btn">保存</button>
+                                <button onclick="deleteSite(${site.id}, '${site.token}')" class="btn btn-danger">删除</button>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                        
+                        // 添加单元格编辑事件
+                        addEditEvents(row, 'site', site.id);
+                    });
+                })
+                .catch(error => {
+                    console.error('获取站点列表失败:', error);
+                    alert('获取站点列表失败: ' + error.message);
+                });
+        }
+        
+        // 刷新评论列表
+        function refreshReviews() {
+            fetch('/api/reviews/all')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector('#reviewsTable tbody');
+                    tbody.innerHTML = '';
+                    
+                    data.forEach(review => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${review.id}</td>
+                            <td contenteditable="true" data-field="suid">${review.suid}</td>
+                            <td contenteditable="true" data-field="token">${review.token}</td>
+                            <td contenteditable="true" data-field="content">${review.content}</td>
+                            <td>${new Date(review.created_at).toLocaleString()}</td>
+                            <td>${new Date(review.updated_at).toLocaleString()}</td>
+                            <td class="action-cell">
+                                <button onclick="saveReviewRow(${review.id}, this)" class="btn">保存</button>
+                                <button onclick="deleteReview(${review.id}, '${review.token}')" class="btn btn-danger">删除</button>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                        
+                        // 添加单元格编辑事件
+                        addEditEvents(row, 'review', review.id);
+                    });
+                })
+                .catch(error => {
+                    console.error('获取评论列表失败:', error);
+                    alert('获取评论列表失败: ' + error.message);
+                });
+        }
+        
+        // 添加单元格编辑事件
+        function addEditEvents(row, type, id) {
+            const editableCells = row.querySelectorAll('td[contenteditable="true"]');
+            editableCells.forEach(cell => {
+                cell.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (type === 'site') {
+                            saveSiteRow(id, row.querySelector('.action-cell .btn'));
+                        } else if (type === 'review') {
+                            saveReviewRow(id, row.querySelector('.action-cell .btn'));
+                        }
+                    }
+                });
+            });
+        }
+        
+        // 添加站点空行
+        function addSiteRow() {
+            const tbody = document.querySelector('#sitesTable tbody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>新增</td>
+                <td contenteditable="true" data-field="suid"></td>
+                <td contenteditable="true" data-field="token"></td>
+                <td contenteditable="true" data-field="name"></td>
+                <td contenteditable="true" data-field="url"></td>
+                <td contenteditable="true" data-field="icon"></td>
+                <td contenteditable="true" data-field="status">actived</td>
+                <td></td>
+                <td></td>
+                <td class="action-cell">
+                    <button onclick="saveNewSite(this)" class="btn btn-success">添加</button>
+                    <button onclick="this.closest('tr').remove()" class="btn btn-danger">取消</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+            
+            // 添加单元格编辑事件
+            addEditEvents(row, 'site', null);
+        }
+        
+        // 添加评论空行
+        function addReviewRow() {
+            const tbody = document.querySelector('#reviewsTable tbody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>新增</td>
+                <td contenteditable="true" data-field="suid"></td>
+                <td contenteditable="true" data-field="token"></td>
+                <td contenteditable="true" data-field="content"></td>
+                <td></td>
+                <td></td>
+                <td class="action-cell">
+                    <button onclick="saveNewReview(this)" class="btn btn-success">添加</button>
+                    <button onclick="this.closest('tr').remove()" class="btn btn-danger">取消</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+            
+            // 添加单元格编辑事件
+            addEditEvents(row, 'review', null);
+        }
+        
+        // 保存站点行
+        function saveSiteRow(id, button) {
+            const row = button.closest('tr');
+            const cells = row.querySelectorAll('td');
+            
+            const siteData = {
+                suid: cells[1].textContent,
+                token: cells[2].textContent,
+                name: cells[3].textContent,
+                url: cells[4].textContent,
+                icon: cells[5].textContent,
+                status: cells[6].textContent
+            };
+            
+            // 发送更新请求
+            fetch(`/api/sites/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${siteData.token}`
+                },
+                body: JSON.stringify(siteData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                alert('站点保存成功');
+                refreshSites();
+            })
+            .catch(error => {
+                console.error('保存站点失败:', error);
+                alert('保存站点失败: ' + error.message);
+            });
+        }
+        
+        // 保存新站点
+        function saveNewSite(button) {
+            const row = button.closest('tr');
+            const cells = row.querySelectorAll('td');
+            
+            const siteData = {
+                suid: cells[1].textContent,
+                token: cells[2].textContent,
+                name: cells[3].textContent,
+                url: cells[4].textContent,
+                icon: cells[5].textContent,
+                status: cells[6].textContent
+            };
+            
+            // 发送创建请求
+            fetch('/api/sites', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${siteData.token}`
+                },
+                body: JSON.stringify(siteData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                alert('站点添加成功');
+                refreshSites();
+            })
+            .catch(error => {
+                console.error('添加站点失败:', error);
+                alert('添加站点失败: ' + error.message);
+            });
+        }
+        
+        // 保存评论行
+        function saveReviewRow(id, button) {
+            const row = button.closest('tr');
+            const cells = row.querySelectorAll('td');
+            
+            const reviewData = {
+                suid: cells[1].textContent,
+                token: cells[2].textContent,
+                content: cells[3].textContent
+            };
+            
+            // 发送更新请求
+            fetch(`/api/reviews/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${reviewData.token}`
+                },
+                body: JSON.stringify(reviewData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                alert('评论保存成功');
+                refreshReviews();
+            })
+            .catch(error => {
+                console.error('保存评论失败:', error);
+                alert('保存评论失败: ' + error.message);
+            });
+        }
+        
+        // 保存新评论
+        function saveNewReview(button) {
+            const row = button.closest('tr');
+            const cells = row.querySelectorAll('td');
+            
+            const reviewData = {
+                suid: cells[1].textContent,
+                token: cells[2].textContent,
+                content: cells[3].textContent
+            };
+            
+            // 发送创建请求
+            fetch('/api/reviews', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${reviewData.token}`
+                },
+                body: JSON.stringify(reviewData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                alert('评论添加成功');
+                refreshReviews();
+            })
+            .catch(error => {
+                console.error('添加评论失败:', error);
+                alert('添加评论失败: ' + error.message);
+            });
+        }
+        
+        // 删除站点
+        function deleteSite(id, token) {
+            if (!confirm('确定要删除这个站点吗？')) return;
+            
+            fetch(`/api/sites/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                alert('站点删除成功');
+                refreshSites();
+            })
+            .catch(error => {
+                console.error('删除站点失败:', error);
+                alert('删除站点失败: ' + error.message);
+            });
+        }
+        
+        // 删除评论
+        function deleteReview(id, token) {
+            if (!confirm('确定要删除这个评论吗？')) return;
+            
+            fetch(`/api/reviews/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                alert('评论删除成功');
+                refreshReviews();
+            })
+            .catch(error => {
+                console.error('删除评论失败:', error);
+                alert('删除评论失败: ' + error.message);
+            });
+        }
+        
+        // 发送 API 请求
+        function sendApiRequest() {
+            const endpoint = document.getElementById('apiEndpoint').value;
+            const method = document.getElementById('apiMethod').value;
+            const headersText = document.getElementById('apiHeaders').value;
+            const bodyText = document.getElementById('apiBody').value;
+            
+            let headers = {};
+            try {
+                headers = JSON.parse(headersText);
+            } catch (e) {
+                alert('请求头格式错误: ' + e.message);
+                return;
+            }
+            
+            const options = {
+                method: method,
+                headers: headers
+            };
+            
+            if (method !== 'GET' && bodyText) {
+                try {
+                    options.body = JSON.stringify(JSON.parse(bodyText));
+                } catch (e) {
+                    alert('请求体格式错误: ' + e.message);
+                    return;
+                }
+            }
+            
+            fetch(endpoint, options)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('apiResponse').value = data;
+                })
+                .catch(error => {
+                    document.getElementById('apiResponse').value = '请求失败: ' + error.message;
+                });
+        }
+        
+        // 保存设置
+        function saveSettings() {
+            const token = document.getElementById('devToken').value;
+            localStorage.setItem('devToken', token);
+            alert('设置已保存');
+        }
+        
+        // 加载设置
+        function loadSettings() {
+            const token = localStorage.getItem('devToken');
+            if (token) {
+                document.getElementById('devToken').value = token;
+            }
+        }
+        
+        // 初始化测试数据
+        function initData() {
+            if (!confirm('确定要初始化测试数据吗？这将添加一些示例站点和评论。')) return;
+            
+            // 这里可以添加初始化测试数据的逻辑
+            alert('测试数据初始化功能待实现');
+        }
+        
+        // 清空所有数据
+        function clearData() {
+            if (!confirm('确定要清空所有数据吗？此操作不可恢复！')) return;
+            
+            // 这里可以添加清空数据的逻辑
+            alert('清空数据功能待实现');
+        }
+    </script>
+</body>
+</html>

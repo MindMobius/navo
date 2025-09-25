@@ -21,10 +21,17 @@
 	 * databases, object storage, AI inference, real-time communication and more.
 	 * https://developers.cloudflare.com/workers/runtime-apis/bindings/
 	 */
-	"assets": { 
-		"directory": "./public/", 
-		"binding": "ASSETS" 
+	"assets": {
+		"directory": "./public/",
+		"binding": "ASSETS"
 	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "navo-db",
+			"database_id": "eea762f4-a58b-45a2-87c3-707998298b13"
+		}
+	],
 	/**
 	 * Environment Variables
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables

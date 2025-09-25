@@ -1,3 +1,58 @@
+## 接口
+
+- 获取 站点
+- 获取 站点 评论
+- 通过 token 增加站点
+- 通过 suid + token 修改站点
+- 通过 suid + token 增加评论
+- 通过 评论表id + token 修改评论
+- 通过 评论表id + token 删除评论
+
+### 外部接口
+- 接口地址：
+```
+/api/update/url
+```
+- 请求方法：POST
+- 请求头：
+```
+Authorization: Bearer [YOUR_TOKEN]
+```
+- 请求体：
+```
+[
+  {
+    "suid": "site-uid-1",
+    "url": "#{ipAddr}"
+  },
+  {
+    "suid": "site-uid-2",
+    "url": "https://emby.your-domain.com:#{port}"
+  },
+  {
+    "suid": "site-uid-3",
+    "url": "https://openlist.your-domain.com:#{port}"
+  }
+]
+```
+- 接口调用成功包含的字符串:
+```
+"success"
+```
+
+## 生成规则
+
+### token 密钥
+固定长度密钥的函数，总长度为51个字符 (navo- + 46个小写字母)
+
+### suid 站点uid
+navo- + 7位随机小写字母和数字
+```
+import { customAlphabet } from 'nanoid';
+const genNavoId = (len = 7) => 'navo-' + customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', len)();
+console.log(genNavoId(7)); // navo-m2k9xq3
+```
+
 ## 数据库使用
 
 本项目使用 Cloudflare D1 数据库来存储站点和用户信息。
@@ -25,7 +80,7 @@
 
 ### 索引
 
-### 规划中，暂不实现
+## 规划中，暂不实现
 
 #### 收藏夹表 (favorites)
 - id: INTEGER PRIMARY KEY AUTOINCREMENT - 自增主键
