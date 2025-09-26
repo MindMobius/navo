@@ -8,6 +8,15 @@
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/admin.css">
     <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mustache@latest/mustache.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        // 配置marked以支持GitHub风格的任务列表
+        marked.setOptions({
+            gfm: true,
+            breaks: true
+        });
+    </script>
 </head>
 <body>
     <!-- 顶栏工具 -->
@@ -109,10 +118,6 @@
                 <div class="admin-page" id="reviewsPage">
                     <div class="admin-page-header">
                         <h2>评论列表</h2>
-                        <button id="addReviewBtn" class="btn btn-primary">
-                            <i data-feather="plus"></i>
-                            添加评论
-                        </button>
                     </div>
                     
                     <div class="admin-section">
@@ -130,7 +135,7 @@
                 <div class="admin-page" id="favoritesPage">
                     <div class="admin-page-header">
                         <h2>收藏夹列表</h2>
-                        <button id="addFavBtn" class="btn btn-primary">
+                        <button id="addFavBtn" class="btn btn-primary" style="display: none;">
                             <i data-feather="plus"></i>
                             新建收藏夹
                         </button>
@@ -141,6 +146,9 @@
                             <h3>使用说明</h3>
                             <p>收藏夹创建后，用户可以通过 <code>/fav-别名</code> 的方式直接访问。</p>
                             <p>例如：别名为 <code>design-tools</code> 的收藏夹，访问地址为 <code>/fav-design-tools</code></p>
+                            <div class="alert alert-warning">
+                                <p><strong>功能开发中：</strong>收藏夹功能暂未完成开发，敬请期待。</p>
+                            </div>
                         </div>
                         
                         <div class="items-grid" id="favoritesGrid">
@@ -189,8 +197,15 @@
                         <input type="url" id="siteUrl" required placeholder="请输入站点URL">
                     </div>
                     <div class="form-group">
-                        <label for="siteTags">标签（多个标签用逗号分隔）</label>
-                        <input type="text" id="siteTags" placeholder="例如: 工具,设计,开发">
+                        <label for="siteIcon">图标URL（可选）</label>
+                        <input type="url" id="siteIcon" placeholder="请输入图标URL">
+                    </div>
+                    <div class="form-group">
+                        <label for="siteStatus">状态</label>
+                        <select id="siteStatus" required>
+                            <option value="actived">已激活</option>
+                            <option value="deleted">已删除</option>
+                        </select>
                     </div>
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" id="cancelSiteBtn">取消</button>
@@ -213,21 +228,70 @@
                 <form id="reviewForm">
                     <input type="hidden" id="reviewId">
                     <div class="form-group">
-                        <label for="reviewSiteId">选择站点</label>
-                        <select id="reviewSiteId" required>
-                            <option value="">请选择站点</option>
-                            <!-- 站点选项将通过JavaScript动态加载 -->
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <label for="reviewContent">评论内容</label>
-                        <textarea id="reviewContent" required placeholder="请输入评论内容，支持Markdown语法"></textarea>
+                        <div class="tab-container">
+                            <div class="tab active" data-tab="edit">编辑</div>
+                            <div class="tab" data-tab="preview">预览</div>
+                        </div>
+                        <div class="tab-content active" id="editTab">
+                            <textarea id="reviewEditor" placeholder="在此编辑你的评论内容 (支持 Markdown 语法)" style="resize: none;"></textarea>
+                        </div>
+                        <div class="tab-content" id="previewTab">
+                            <div class="preview-container" id="reviewPreview" style="overflow-y: auto;"></div>
+                        </div>
+                        <textarea id="reviewContent" required placeholder="请输入评论内容，支持Markdown语法" style="display: none;"></textarea>
                     </div>
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" id="cancelReviewBtn">取消</button>
                         <button type="submit" class="btn btn-primary">保存</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 评论详情模态框 -->
+    <div class="modal" id="reviewDetailModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>站点详情</h2>
+                <button class="modal-close" id="closeReviewDetailModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-info">
+                    <div class="form-group">
+                        <label>SUID</label>
+                        <div id="detailSuid"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>站点名称</label>
+                        <div id="detailName"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>URL</label>
+                        <div id="detailUrl"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>图标</label>
+                        <div id="detailIcon"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>状态</label>
+                        <div id="detailStatus"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>创建时间</label>
+                        <div id="detailCreatedAt"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>更新时间</label>
+                        <div id="detailUpdatedAt"></div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-secondary" id="closeReviewDetailBtn">关闭</button>
+                </div>
             </div>
         </div>
     </div>
@@ -302,6 +366,95 @@
         </div>
     </div>
 
+    <!-- Mustache 模板 -->
+    <script id="site-card-template" type="text/template">
+        {{#sites}}
+        <div class="item-card">
+            <div class="item-card-content">
+                <div class="item-info">
+                    <h3 class="item-title truncate-text">{{name}}</h3>
+                    <p class="item-url truncate-text"><a href="{{url}}" target="_blank">{{url}}</a></p>
+                    <div class="item-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">SUID:</span>
+                            <span class="meta-value copyable-suid" data-suid="{{suid}}" title="点击复制">{{suid}}</span>
+                        </div>
+                    </div>
+                    <div class="item-meta secondary-meta">
+                        <div class="meta-item meta-secondary">
+                            <span class="meta-label">创建:</span>
+                            <span class="meta-value">{{created_at}}</span>
+                        </div>
+                        <div class="meta-item meta-secondary">
+                            <span class="meta-label">更新:</span>
+                            <span class="meta-value">{{updated_at}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="item-status status-{{status}}">
+                        <span class="status-indicator {{status}}"></span>
+                        {{#statusEquals}}
+                        {{#actived}}已激活{{/actived}}
+                        {{#deleted}}已删除{{/deleted}}
+                        {{/statusEquals}}
+                    </div>
+                    <div class="item-actions">
+                        <button class="icon-button edit-btn" onclick="editSite('{{suid}}')" title="编辑">
+                            <i data-feather="edit"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/sites}}
+        {{^sites}}
+        <div class="empty-state">
+            <i data-feather="globe" class="empty-icon"></i>
+            <p>暂无站点数据</p>
+        </div>
+        {{/sites}}
+    </script>
+
+    <script id="review-card-template" type="text/template">
+        {{#reviews}}
+        <div class="item-card">
+            <div class="item-card-content">
+                <div class="item-info">
+                    <div class="item-content markdown-content" id="review-content-{{id}}">{{{content}}}</div>
+                </div>
+                    <div class="review-meta">
+                        <div class="meta-item meta-secondary">
+                            <span class="meta-label">创建:</span>
+                            <span class="meta-value">{{created_at}}</span>
+                        </div>
+                        <div class="meta-item meta-secondary">
+                            <span class="meta-label">更新:</span>
+                            <span class="meta-value">{{updated_at}}</span>
+                        </div>
+                    </div>
+                <div class="item-actions">
+                    <button class="icon-button detail-btn" onclick="showReviewDetail('{{suid}}')" title="详情">
+                        <i data-feather="info"></i>
+                    </button>
+                    <button class="icon-button edit-btn" onclick="editReview('{{id}}')" title="编辑">
+                        <i data-feather="edit"></i>
+                    </button>
+                    <button class="icon-button delete-btn" onclick="deleteReview('{{id}}')" title="删除">
+                        <i data-feather="trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {{/reviews}}
+        {{^reviews}}
+        <div class="empty-state">
+            <i data-feather="message-square" class="empty-icon"></i>
+            <p>暂无评论数据</p>
+        </div>
+        {{/reviews}}
+    </script>
+
     <script src="/js/admin.js"></script>
     <script>
         // 初始化 feather icons
@@ -309,6 +462,9 @@
         
         // 页面切换功能
         document.addEventListener('DOMContentLoaded', function() {
+            // 检查密钥
+            checkApiKey();
+            
             const pageButtons = document.querySelectorAll('.admin-page-btn');
             const pages = document.querySelectorAll('.admin-page');
             
@@ -348,252 +504,292 @@
             updateStats();
         });
         
-        // 收藏夹数据示例（实际项目中会从API获取）
-        const sampleFavorites = [
-            {
-                id: 1,
-                name: "设计工具",
-                slug: "design-tools",
-                description: "收集常用的设计工具和资源",
-                sites: [
-                    {id: 1, name: "Remove.bg", url: "https://www.remove.bg"},
-                    {id: 3, name: "Coolors", url: "https://coolors.co"}
-                ]
-            },
-            {
-                id: 2,
-                name: "开发资源",
-                slug: "dev-resources",
-                description: "常用的开发工具和文档",
-                sites: [
-                    {id: 2, name: "GitHub", url: "https://github.com"}
-                ]
+        // 检查API密钥
+        function checkApiKey() {
+            const apiKey = localStorage.getItem('navo_api_key');
+            
+            // 检查密钥格式: navo- + 46个小写字母，总共51个字符
+            if (!apiKey || !/^navo-[a-z]{46}$/.test(apiKey)) {
+                alert('未检测到有效的API密钥，请先配置密钥');
+                window.location.href = '/key-auth.html';
+                return false;
             }
-        ];
+            
+            return true;
+        }
         
-        // 站点数据示例（实际项目中会从API获取）
-        const sampleSites = [
-            {
-                id: 1,
-                name: "Remove.bg",
-                url: "https://www.remove.bg"
-            },
-            {
-                id: 2,
-                name: "GitHub",
-                url: "https://github.com"
-            },
-            {
-                id: 3,
-                name: "Coolors",
-                url: "https://coolors.co"
-            },
-            {
-                id: 4,
-                name: "本地NAS",
-                url: "http://192.168.1.100:5000"
-            }
-        ];
+        // 获取当前API密钥
+        function getCurrentApiKey() {
+            return localStorage.getItem('navo_api_key');
+        }
         
-        // 评论数据示例（实际项目中会从API获取）
-        const sampleReviews = [
-            {
-                id: 1,
-                siteId: 1,
-                content: "非常好用的在线抠图工具，处理效果自然。",
-                updatedAt: "2025-09-01T10:00:00Z"
-            },
-            {
-                id: 2,
-                siteId: 2,
-                content: "代码托管平台，功能强大。",
-                updatedAt: "2025-08-20T09:15:00Z"
-            }
-        ];
+        // 站点数据
+        let sitesData = [];
+        
+        // 评论数据
+        let reviewsData = [];
         
         // 更新统计数据
         function updateStats() {
-            document.getElementById('siteCount').textContent = sampleSites.length;
-            document.getElementById('reviewCount').textContent = sampleReviews.length;
-            document.getElementById('favCount').textContent = sampleFavorites.length;
+            document.getElementById('siteCount').textContent = sitesData.length;
+            document.getElementById('reviewCount').textContent = reviewsData.length;
+            document.getElementById('favCount').textContent = 0; // 收藏夹功能暂未完成
         }
         
         // 渲染站点列表
-        function renderSites() {
-            const siteGrid = document.getElementById('adminSiteGrid');
-            siteGrid.innerHTML = '';
+        async function renderSites() {
+            if (!checkApiKey()) return;
             
-            if (sampleSites.length === 0) {
+            const siteGrid = document.getElementById('adminSiteGrid');
+            
+            try {
+                const response = await fetch('/api/sites/token', {
+                    headers: {
+                        'Authorization': `Bearer ${getCurrentApiKey()}`
+                    }
+                });
+                
+                if (response.ok) {
+                    sitesData = await response.json();
+                    
+                    const template = document.getElementById('site-card-template').innerHTML;
+                    const rendered = Mustache.render(template, {
+                        sites: sitesData,
+                        statusEquals: function() {
+                            return {
+                                actived: this.status === 'actived',
+                                deleted: this.status === 'deleted'
+                            };
+                        }
+                    });
+                    
+                    siteGrid.innerHTML = rendered;
+                    
+                    // 添加SUID复制功能
+                    document.querySelectorAll('.copyable-suid').forEach(element => {
+                        element.addEventListener('click', function() {
+                            const suid = this.getAttribute('data-suid');
+                            navigator.clipboard.writeText(suid).then(() => {
+                                // 显示复制成功的提示
+                                const originalText = this.textContent;
+                                this.textContent = '已复制!';
+                                setTimeout(() => {
+                                    this.textContent = originalText;
+                                }, 1000);
+                            });
+                        });
+                    });
+                    
+                    feather.replace();
+                } else {
+                    siteGrid.innerHTML = `
+                        <div class="empty-state">
+                            <i data-feather="alert-triangle" class="empty-icon"></i>
+                            <p>加载站点数据失败</p>
+                        </div>
+                    `;
+                    feather.replace();
+                }
+            } catch (error) {
                 siteGrid.innerHTML = `
                     <div class="empty-state">
-                        <i data-feather="globe" class="empty-icon"></i>
-                        <p>暂无站点数据</p>
+                        <i data-feather="alert-triangle" class="empty-icon"></i>
+                        <p>加载站点数据时发生错误</p>
                     </div>
                 `;
                 feather.replace();
-                return;
             }
             
-            sampleSites.forEach(site => {
-                const card = document.createElement('div');
-                card.className = 'item-card';
-                card.innerHTML = `
-                    <div class="item-card-content">
-                        <div class="item-card-header">
-                            <div class="item-icon bg-blue">
-                                <i data-feather="globe"></i>
-                            </div>
-                            <div class="item-info">
-                                <h3 class="item-title">${site.name}</h3>
-                                <p class="item-url"><a href="${site.url}" target="_blank">${site.url}</a></p>
-                            </div>
-                        </div>
-                        <div class="item-actions">
-                            <button class="icon-button edit-btn" onclick="editSite(${site.id})" title="编辑">
-                                <i data-feather="edit"></i>
-                            </button>
-                            <button class="icon-button delete-btn" onclick="deleteSite(${site.id})" title="删除">
-                                <i data-feather="trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                siteGrid.appendChild(card);
-            });
-            
-            feather.replace();
             updateStats();
         }
         
         // 渲染评论列表
-        function renderReviews() {
-            const reviewsGrid = document.getElementById('reviewsGrid');
-            reviewsGrid.innerHTML = '';
+        async function renderReviews() {
+            if (!checkApiKey()) return;
             
-            if (sampleReviews.length === 0) {
+            const reviewsGrid = document.getElementById('reviewsGrid');
+            
+            try {
+                const response = await fetch('/api/reviews/token', {
+                    headers: {
+                        'Authorization': `Bearer ${getCurrentApiKey()}`
+                    }
+                });
+                
+                if (response.ok) {
+                    reviewsData = await response.json();
+                    
+                    const template = document.getElementById('review-card-template').innerHTML;
+                    const rendered = Mustache.render(template, { reviews: reviewsData });
+                    
+                    reviewsGrid.innerHTML = rendered;
+                    
+                    // 渲染Markdown内容
+                    document.querySelectorAll('.markdown-content').forEach(element => {
+                        element.innerHTML = marked.parse(element.textContent || element.innerText);
+                    });
+                    
+                    feather.replace();
+                } else {
+                    reviewsGrid.innerHTML = `
+                        <div class="empty-state">
+                            <i data-feather="alert-triangle" class="empty-icon"></i>
+                            <p>加载评论数据失败</p>
+                        </div>
+                    `;
+                    feather.replace();
+                }
+            } catch (error) {
                 reviewsGrid.innerHTML = `
                     <div class="empty-state">
-                        <i data-feather="message-square" class="empty-icon"></i>
-                        <p>暂无评论数据</p>
+                        <i data-feather="alert-triangle" class="empty-icon"></i>
+                        <p>加载评论数据时发生错误</p>
                     </div>
                 `;
                 feather.replace();
-                return;
             }
             
-            sampleReviews.forEach(review => {
-                const card = document.createElement('div');
-                card.className = 'item-card';
-                
-                // 查找对应的站点名称
-                const site = sampleSites.find(s => s.id === review.siteId);
-                const siteName = site ? site.name : '未知站点';
-                
-                card.innerHTML = `
-                    <div class="item-card-content">
-                        <div class="item-card-header">
-                            <div class="item-icon bg-green">
-                                <i data-feather="message-square"></i>
-                            </div>
-                            <div class="item-info">
-                                <h3 class="item-title">${siteName}</h3>
-                                <p class="item-content">${review.content.substring(0, 50)}${review.content.length > 50 ? '...' : ''}</p>
-                            </div>
-                        </div>
-                        <div class="item-actions">
-                            <button class="icon-button edit-btn" onclick="editReview(${review.id})" title="编辑">
-                                <i data-feather="edit"></i>
-                            </button>
-                            <button class="icon-button delete-btn" onclick="deleteReview(${review.id})" title="删除">
-                                <i data-feather="trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                reviewsGrid.appendChild(card);
-            });
-            
-            feather.replace();
             updateStats();
         }
         
         // 渲染收藏夹列表
         function renderFavorites() {
+            // 收藏夹功能暂未完成开发
             const favoritesGrid = document.getElementById('favoritesGrid');
-            favoritesGrid.innerHTML = '';
-            
-            if (sampleFavorites.length === 0) {
-                favoritesGrid.innerHTML = `
-                    <div class="empty-state">
-                        <i data-feather="folder" class="empty-icon"></i>
-                        <p>暂无收藏夹数据</p>
-                    </div>
-                `;
-                feather.replace();
-                return;
-            }
-            
-            sampleFavorites.forEach(fav => {
-                const card = document.createElement('div');
-                card.className = 'item-card';
-                
-                card.innerHTML = `
-                    <div class="item-card-content">
-                        <div class="item-card-header">
-                            <div class="item-icon bg-orange">
-                                <i data-feather="folder"></i>
-                            </div>
-                            <div class="item-info">
-                                <h3 class="item-title">${fav.name}</h3>
-                                <p class="item-url"><a href="/fav-${fav.slug}" target="_blank">/fav-${fav.slug}</a></p>
-                                <p class="item-description">${fav.description || '暂无描述'}</p>
-                            </div>
-                        </div>
-                        <div class="item-stats">
-                            包含 ${fav.sites.length} 个站点
-                        </div>
-                        <div class="item-actions">
-                            <button class="icon-button detail-btn" onclick="showFavDetails(${fav.id})" title="详情">
-                                <i data-feather="info"></i>
-                            </button>
-                            <button class="icon-button edit-btn" onclick="editFav(${fav.id})" title="编辑">
-                                <i data-feather="edit"></i>
-                            </button>
-                            <button class="icon-button delete-btn" onclick="deleteFav(${fav.id})" title="删除">
-                                <i data-feather="trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                favoritesGrid.appendChild(card);
-            });
-            
+            favoritesGrid.innerHTML = `
+                <div class="empty-state">
+                    <i data-feather="folder" class="empty-icon"></i>
+                    <p>收藏夹功能开发中，敬请期待</p>
+                </div>
+            `;
             feather.replace();
             updateStats();
         }
         
         // 编辑站点
-        function editSite(siteId) {
-            // 实现编辑站点逻辑
-            alert('编辑站点功能待实现，站点ID: ' + siteId);
+        async function editSite(siteSuid) {
+            if (!checkApiKey()) return;
+            
+            try {
+                const response = await fetch(`/api/sites/${siteSuid}`, {
+                    headers: {
+                        'Authorization': `Bearer ${getCurrentApiKey()}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const site = await response.json();
+                    
+                    // 填充表单
+                    document.getElementById('siteId').value = site.suid;
+                    document.getElementById('siteName').value = site.name;
+                    document.getElementById('siteUrl').value = site.url;
+                    document.getElementById('siteIcon').value = site.icon || '';
+                    document.getElementById('siteStatus').value = site.status;
+                    
+                    document.getElementById('siteModalTitle').textContent = '编辑站点';
+                    document.getElementById('siteModal').classList.add('show');
+                } else {
+                    const errorData = await response.json();
+                    alert('获取站点信息失败: ' + errorData.error);
+                }
+            } catch (error) {
+                alert('获取站点信息时发生错误: ' + error.message);
+            }
         }
         
-        // 删除站点
-        function deleteSite(siteId) {
-            // 实现删除站点逻辑
-            alert('删除站点功能待实现，站点ID: ' + siteId);
+        // 显示评论详情
+        async function showReviewDetail(suid) {
+            if (!checkApiKey()) return;
+            
+            try {
+                const response = await fetch(`/api/sites/${suid}`, {
+                    headers: {
+                        'Authorization': `Bearer ${getCurrentApiKey()}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const site = await response.json();
+                    
+                    // 填充详情
+                    document.getElementById('detailSuid').textContent = site.suid;
+                    document.getElementById('detailName').textContent = site.name;
+                    document.getElementById('detailUrl').textContent = site.url;
+                    document.getElementById('detailIcon').textContent = site.icon || '无';
+                    document.getElementById('detailStatus').textContent = site.status;
+                    document.getElementById('detailCreatedAt').textContent = site.created_at;
+                    document.getElementById('detailUpdatedAt').textContent = site.updated_at;
+                    
+                    document.getElementById('reviewDetailModal').classList.add('show');
+                    feather.replace();
+                } else {
+                    const errorData = await response.json();
+                    alert('获取站点详情失败: ' + errorData.error);
+                }
+            } catch (error) {
+                alert('获取站点详情时发生错误: ' + error.message);
+            }
         }
         
         // 编辑评论
-        function editReview(reviewId) {
-            // 实现编辑评论逻辑
-            alert('编辑评论功能待实现，评论ID: ' + reviewId);
+        async function editReview(reviewId) {
+            if (!checkApiKey()) return;
+            
+            try {
+                // 查找评论
+                const review = reviewsData.find(r => r.id == reviewId);
+                if (!review) {
+                    alert('未找到该评论');
+                    return;
+                }
+                
+                // 填充表单
+                document.getElementById('reviewId').value = review.id;
+                document.getElementById('reviewContent').value = review.content;
+                
+                // 同步到编辑器
+                document.getElementById('reviewEditor').value = review.content;
+                
+                document.getElementById('reviewModalTitle').textContent = '编辑评论';
+                document.getElementById('reviewModal').classList.add('show');
+                
+                // 初始化标签页状态为编辑状态
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.querySelector('.tab[data-tab="edit"]').classList.add('active');
+                document.getElementById('editTab').classList.add('active');
+            } catch (error) {
+                alert('编辑评论时发生错误');
+            }
         }
         
         // 删除评论
-        function deleteReview(reviewId) {
-            // 实现删除评论逻辑
-            alert('删除评论功能待实现，评论ID: ' + reviewId);
+        async function deleteReview(reviewId) {
+            if (!checkApiKey()) return;
+            
+            if (!confirm('确定要删除这条评论吗？删除后将无法恢复！')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/reviews/${reviewId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${getCurrentApiKey()}`
+                    }
+                });
+                
+                if (response.ok) {
+                    alert('评论删除成功');
+                    renderReviews(); // 重新加载评论列表
+                } else {
+                    const result = await response.json();
+                    alert('删除评论失败: ' + (result.error || '未知错误'));
+                }
+            } catch (error) {
+                alert('删除评论时发生错误');
+            }
         }
         
         // 显示新建收藏夹模态框
@@ -623,6 +819,15 @@
             document.getElementById('favDetailModal').classList.remove('show');
         });
         
+        // 关闭评论详情模态框
+        document.getElementById('closeReviewDetailModal').addEventListener('click', function() {
+            document.getElementById('reviewDetailModal').classList.remove('show');
+        });
+        
+        document.getElementById('closeReviewDetailBtn').addEventListener('click', function() {
+            document.getElementById('reviewDetailModal').classList.remove('show');
+        });
+        
         // 表单提交事件
         document.getElementById('favForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -634,144 +839,25 @@
             
             if (id) {
                 // 编辑现有收藏夹
-                const fav = sampleFavorites.find(f => f.id == id);
-                if (fav) {
-                    fav.name = name;
-                    fav.slug = slug;
-                    fav.description = description;
-                }
+                // 实现逻辑
             } else {
                 // 添加新收藏夹
-                const newFav = {
-                    id: Date.now(), // 简单的ID生成方式
-                    name: name,
-                    slug: slug,
-                    description: description,
-                    sites: []
-                };
-                sampleFavorites.push(newFav);
+                // 实现逻辑
             }
             
             document.getElementById('favModal').classList.remove('show');
             renderFavorites(); // 重新渲染
         });
         
-        // 显示收藏夹详情
-        function showFavDetails(favId) {
-            const fav = sampleFavorites.find(f => f.id === favId);
-            if (!fav) return;
-            
-            document.getElementById('favDetailTitle').textContent = fav.name;
-            document.getElementById('favDetailDescription').textContent = fav.description || '暂无描述';
-            
-            // 渲染已收藏站点列表
-            const favSiteList = document.getElementById('favSiteList');
-            favSiteList.innerHTML = '';
-            
-            if (fav.sites.length === 0) {
-                favSiteList.innerHTML = '<p>该收藏夹暂无站点</p>';
-            } else {
-                fav.sites.forEach(site => {
-                    const siteItem = document.createElement('div');
-                    siteItem.className = 'site-item';
-                    siteItem.innerHTML = `
-                        <div class="site-item-info">
-                            <div class="site-item-name">${site.name}</div>
-                            <div class="site-item-url">${site.url}</div>
-                        </div>
-                        <button class="icon-button remove-btn" onclick="removeSiteFromFav(${favId}, ${site.id})" title="移除">
-                            <i data-feather="x"></i>
-                        </button>
-                    `;
-                    favSiteList.appendChild(siteItem);
-                });
-            }
-            
-            // 渲染站点搜索列表
-            renderSiteSearchList(favId);
-            
-            document.getElementById('favDetailModal').classList.add('show');
-            feather.replace();
-        }
-        
-        // 渲染站点搜索列表
-        function renderSiteSearchList(favId) {
-            const siteList = document.getElementById('siteList');
-            siteList.innerHTML = '';
-            
-            if (sampleSites.length === 0) {
-                siteList.innerHTML = '<p>暂无站点可添加</p>';
-                return;
-            }
-            
-            sampleSites.forEach(site => {
-                // 检查站点是否已在收藏夹中
-                const fav = sampleFavorites.find(f => f.id === favId);
-                const isAdded = fav && fav.sites.some(s => s.id === site.id);
-                
-                const siteItem = document.createElement('div');
-                siteItem.className = 'site-item';
-                siteItem.innerHTML = `
-                    <div class="site-item-info">
-                        <div class="site-item-name">${site.name}</div>
-                        <div class="site-item-url">${site.url}</div>
-                    </div>
-                    <button class="icon-button add-btn" onclick="addSiteToFav(${favId}, ${site.id})" title="添加" ${isAdded ? 'disabled' : ''}>
-                        <i data-feather="plus"></i>
-                    </button>
-                `;
-                siteList.appendChild(siteItem);
-            });
-            
-            feather.replace();
-        }
-        
-        // 编辑收藏夹
-        function editFav(favId) {
-            const fav = sampleFavorites.find(f => f.id === favId);
-            if (!fav) return;
-            
-            document.getElementById('favModalTitle').textContent = '编辑收藏夹';
-            document.getElementById('favId').value = fav.id;
-            document.getElementById('favName').value = fav.name;
-            document.getElementById('favSlug').value = fav.slug;
-            document.getElementById('favDescription').value = fav.description || '';
-            document.getElementById('favModal').classList.add('show');
-        }
-        
-        // 删除收藏夹
-        function deleteFav(favId) {
-            if (confirm('确定要删除这个收藏夹吗？')) {
-                const index = sampleFavorites.findIndex(f => f.id === favId);
-                if (index !== -1) {
-                    sampleFavorites.splice(index, 1);
-                    renderFavorites();
-                }
-            }
-        }
-        
-        // 添加站点到收藏夹
-        function addSiteToFav(favId, siteId) {
-            const fav = sampleFavorites.find(f => f.id === favId);
-            const site = sampleSites.find(s => s.id === siteId);
-            
-            if (fav && site && !fav.sites.some(s => s.id === siteId)) {
-                fav.sites.push({...site}); // 添加站点副本
-                showFavDetails(favId); // 重新渲染详情
-            }
-        }
-        
-        // 从收藏夹移除站点
-        function removeSiteFromFav(favId, siteId) {
-            const fav = sampleFavorites.find(f => f.id === favId);
-            if (fav) {
-                fav.sites = fav.sites.filter(s => s.id !== siteId);
-                showFavDetails(favId); // 重新渲染详情
-            }
-        }
-        
         // 站点管理按钮事件
         document.getElementById('addSiteBtn').addEventListener('click', function() {
+            // 清空表单
+            document.getElementById('siteId').value = '';
+            document.getElementById('siteName').value = '';
+            document.getElementById('siteUrl').value = '';
+            document.getElementById('siteIcon').value = '';
+            document.getElementById('siteStatus').value = 'actived';
+            
             document.getElementById('siteModal').classList.add('show');
             document.getElementById('siteModalTitle').textContent = '添加站点';
         });
@@ -784,29 +870,160 @@
             document.getElementById('siteModal').classList.remove('show');
         });
         
-        // 评论管理按钮事件
-        document.getElementById('addReviewBtn').addEventListener('click', function() {
-            // 填充站点选择下拉框
-            const siteSelect = document.getElementById('reviewSiteId');
-            siteSelect.innerHTML = '<option value="">请选择站点</option>';
+        // 站点表单提交事件
+        document.getElementById('siteForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
             
-            sampleSites.forEach(site => {
-                const option = document.createElement('option');
-                option.value = site.id;
-                option.textContent = site.name;
-                siteSelect.appendChild(option);
-            });
+            if (!checkApiKey()) return;
             
-            document.getElementById('reviewModal').classList.add('show');
-            document.getElementById('reviewModalTitle').textContent = '添加评论';
+            const suid = document.getElementById('siteId').value;
+            const name = document.getElementById('siteName').value;
+            const url = document.getElementById('siteUrl').value;
+            const icon = document.getElementById('siteIcon').value;
+            const status = document.getElementById('siteStatus').value;
+            
+            try {
+                let response;
+                if (suid) {
+                    // 更新站点
+                    response = await fetch(`/api/sites/${suid}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getCurrentApiKey()}`
+                        },
+                        body: JSON.stringify({ name, url, icon, status })
+                    });
+                } else {
+                    // 创建站点
+                    response = await fetch('/api/sites', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getCurrentApiKey()}`
+                        },
+                        body: JSON.stringify({ name, url, icon })
+                    });
+                }
+                
+                if (response.ok) {
+                    document.getElementById('siteModal').classList.remove('show');
+                    alert('操作成功');
+                    renderSites(); // 重新加载站点列表
+                } else {
+                    const result = await response.json();
+                    alert('操作失败: ' + (result.error || '未知错误'));
+                }
+            } catch (error) {
+                alert('操作时发生错误: ' + error.message);
+            }
         });
         
-        document.getElementById('closeReviewModal').addEventListener('click', function() {
-            document.getElementById('reviewModal').classList.remove('show');
+        // 评论表单提交事件
+        document.getElementById('reviewForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!checkApiKey()) return;
+            
+            const id = document.getElementById('reviewId').value;
+            const content = document.getElementById('reviewContent').value;
+            
+            try {
+                let response;
+                if (id) {
+                    // 更新评论
+                    response = await fetch(`/api/reviews/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getCurrentApiKey()}`
+                        },
+                        body: JSON.stringify({ content })
+                    });
+                } else {
+                    // 创建评论（这种情况不会发生，因为我们移除了添加评论按钮）
+                    response = await fetch('/api/reviews', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getCurrentApiKey()}`
+                        },
+                        body: JSON.stringify({ content })
+                    });
+                }
+                
+                if (response.ok) {
+                    document.getElementById('reviewModal').classList.remove('show');
+                    alert('操作成功');
+                    renderReviews(); // 重新加载评论列表
+                } else {
+                    const result = await response.json();
+                    alert('操作失败: ' + (result.error || '未知错误'));
+                }
+            } catch (error) {
+                alert('操作时发生错误');
+            }
         });
         
-        document.getElementById('cancelReviewBtn').addEventListener('click', function() {
-            document.getElementById('reviewModal').classList.remove('show');
+        // 评论编辑中的标签页切换功能
+        document.addEventListener('click', function(e) {
+            // 检查点击的是否是标签
+            if (e.target.classList.contains('tab')) {
+                const tab = e.target;
+                const tabContainer = tab.closest('.tab-container');
+                
+                // 确保这是评论模态框中的标签
+                if (tabContainer && tabContainer.closest('#reviewModal')) {
+                    const modal = tab.closest('.modal');
+                    
+                    // 移除同容器内所有标签的活动状态
+                    tabContainer.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    modal.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // 添加活动状态到当前标签和对应内容
+                    tab.classList.add('active');
+                    const tabName = tab.getAttribute('data-tab');
+                    const contentDiv = modal.querySelector(`#${tabName}Tab`);
+                    if (contentDiv) {
+                        contentDiv.classList.add('active');
+                    }
+                    
+                    // 如果是预览标签，渲染Markdown
+                    if (tabName === 'preview') {
+                        const editor = modal.querySelector('#reviewEditor');
+                        const preview = modal.querySelector('#reviewPreview');
+                        if (editor && preview) {
+                            // 解析并渲染Markdown内容
+                            preview.innerHTML = marked.parse(editor.value);
+                            
+                            // 确保内容不超出容器范围
+                            preview.querySelectorAll('*').forEach(element => {
+                                element.style.maxWidth = '100%';
+                                element.style.boxSizing = 'border-box';
+                            });
+                        }
+                    }
+                }
+            }
+        });
+        
+        // 在评论编辑器输入时实时更新内容同步
+        document.addEventListener('input', function(e) {
+            if (e.target.id === 'reviewEditor') {
+                const editor = e.target;
+                // 同步到隐藏的表单字段
+                document.getElementById('reviewContent').value = editor.value;
+                
+                // 如果预览标签处于激活状态，则实时更新预览
+                const previewTab = document.querySelector('.tab[data-tab="preview"]');
+                if (previewTab && previewTab.classList.contains('active')) {
+                    const preview = document.getElementById('reviewPreview');
+                    if (preview) {
+                        // 解析并渲染Markdown内容
+                        preview.innerHTML = marked.parse(editor.value);
+                    }
+                }
+            }
         });
         
         // 模态框外部点击关闭
@@ -814,6 +1031,15 @@
             overlay.addEventListener('click', function() {
                 this.parentElement.classList.remove('show');
             });
+        });
+        
+        // 修复评论编辑模态框的关闭按钮
+        document.getElementById('closeReviewModal').addEventListener('click', function() {
+            document.getElementById('reviewModal').classList.remove('show');
+        });
+        
+        document.getElementById('cancelReviewBtn').addEventListener('click', function() {
+            document.getElementById('reviewModal').classList.remove('show');
         });
     </script>
 </body>

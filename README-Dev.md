@@ -7,6 +7,8 @@
 - 通过 suid + token 增加评论
 - 通过 评论表id + token 修改评论
 - 通过 评论表id + token 删除评论
+- 通过 token 获取站点
+- 通过 token 获取评论
 
 ### 外部接口
 - 接口地址：

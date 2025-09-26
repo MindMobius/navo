@@ -200,6 +200,8 @@ body {
     border: 1px solid #eee;
     transition: all 0.3s ease;
     overflow: hidden;
+    height: auto;
+    min-height: 120px;
 }
 
 .item-card:hover {
@@ -208,7 +210,11 @@ body {
 }
 
 .item-card-content {
-    padding: 20px;
+    padding: 12px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .item-card-header {
@@ -247,19 +253,26 @@ body {
 
 .item-info {
     flex: 1;
+    margin-bottom: 10px;
 }
 
 .item-title {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     color: #2c3e50;
-    margin: 0 0 6px 0;
+    margin: 0 0 4px 0;
+}
+
+.truncate-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .item-url {
-    font-size: 14px;
+    font-size: 13px;
     color: #7f8c8d;
-    margin: 0 0 6px 0;
+    margin: 0 0 8px 0;
     word-break: break-all;
 }
 
@@ -274,9 +287,11 @@ body {
 
 .item-content {
     font-size: 14px;
-    color: #5f6368;
-    margin: 0;
-    line-height: 1.5;
+    color: #0a0a0a;
+    margin: 8px 0;
+    line-height: 1.4;
+    max-height: 80px;
+    overflow-y: auto;
 }
 
 .item-description {
@@ -286,19 +301,219 @@ body {
     line-height: 1.5;
 }
 
-.item-stats {
+.item-status {
     font-size: 12px;
-    color: #7f8c8d;
-    padding: 0 20px 16px;
-    border-top: 1px solid #eee;
+    padding: 2px 6px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
 }
 
 .item-actions {
     display: flex;
     gap: 10px;
     justify-content: flex-end;
-    padding: 16px 20px 0;
+    flex-shrink: 0;
+}
+
+.secondary-meta {
+    margin-top: 5px;
+    width: 100%;
+    padding-top: 5px;
+}
+
+.meta-item {
+    display: flex;
+    gap: 3px;
+}
+
+.meta-secondary {
+    opacity: 0.7;
+}
+
+.meta-label {
+    font-weight: 600;
+}
+
+.copyable-suid {
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+}
+
+.copyable-suid:hover {
+    background-color: #f0f0f0;
+}
+
+.item-status {
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    position: absolute;
+    bottom: 10px;
+    left: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.item-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding: 12px 12px 0;
     border-top: 1px solid #eee;
+}
+
+/* 评论卡片中的时间信息移到内容下方 */
+.review-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #7f8c8d;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+/* 评论编辑模态框中的预览区域 */
+.preview-container {
+    min-height: 200px;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    overflow-y: auto;
+    max-height: 400px;
+    box-sizing: border-box;
+}
+
+/* 引入主样式中的markdown内容样式 */
+.preview-container p {
+    margin: 0 0 10px 0;
+}
+
+.preview-container ul, 
+.preview-container ol {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.preview-container li {
+    margin-bottom: 5px;
+}
+
+/* 任务列表项样式 */
+.preview-container li.task-list-item {
+    list-style-type: none;
+    margin-left: -20px;
+}
+
+.preview-container li.task-list-item input[type="checkbox"] {
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.preview-container code {
+    background-color: #f8f9fa;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+.preview-container pre {
+    background-color: #f8f9fa;
+    padding: 12px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 10px 0;
+}
+
+.preview-container pre code {
+    background: none;
+    padding: 0;
+}
+
+.preview-container blockquote {
+    border-left: 3px solid #ddd;
+    padding-left: 15px;
+    margin: 10px 0;
+    color: #6c757d;
+}
+
+.preview-container * {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.preview-container img {
+    max-width: 100%;
+    height: auto;
+}
+
+.preview-container pre {
+    overflow-x: auto;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border-radius: 4px;
+}
+
+.preview-container code {
+    word-break: break-word;
+}
+
+.preview-container blockquote {
+    margin: 0;
+    padding: 10px 20px;
+    border-left: 4px solid #3b82f6;
+    background-color: #f0f7ff;
+}
+
+.tab-container {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.tab {
+    padding: 8px 16px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    margin-right: 5px;
+}
+
+.tab.active {
+    border-color: #ddd;
+    background-color: #fff;
+    border-bottom: 1px solid #fff;
+    margin-bottom: -1px;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+#reviewEditor {
+    width: 100%;
+    min-height: 150px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+#reviewEditor:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
 /* 图标按钮样式 */
@@ -336,6 +551,23 @@ body {
 .icon-button i {
     width: 18px;
     height: 18px;
+}
+
+/* 状态指示器 */
+.status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.status-indicator.actived {
+    background-color: #27ae60;
+}
+
+.status-indicator.deleted {
+    background-color: #e74c3c;
 }
 
 /* 表单样式 */
@@ -469,8 +701,8 @@ body {
     background: white;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 600px;
+    width: 600px;
+    max-width: 90%;
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
@@ -526,6 +758,7 @@ body {
 
 .modal-body {
     padding: 24px;
+    min-height: 300px;
 }
 
 /* 信息框样式 */
@@ -700,7 +933,7 @@ body {
     
     .item-actions {
         flex-direction: row;
-        justify-content: flex-start;
+        justify-content: flex-end;
     }
     
     .form-actions {
@@ -721,4 +954,10 @@ body {
         flex-direction: column;
         gap: 10px;
     }
+}
+
+.detail-info .form-group div {
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: pre-wrap;
 }

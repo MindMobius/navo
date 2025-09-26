@@ -14,5 +14,8 @@
 		"typescript": "^5.5.2",
 		"vitest": "~3.2.0",
 		"wrangler": "^4.35.0"
+	},
+	"dependencies": {
+		"nanoid": "^5.1.6"
 	}
 }

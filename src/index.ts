@@ -41,6 +41,8 @@ interface UpdateUrlRequest {
 	url: string;
 }
 
+import { customAlphabet } from 'nanoid';
+
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		const url = new URL(request.url);
@@ -90,6 +92,71 @@ export default {
 
 		// API路由
 		if (pathname.startsWith('/api/')) {
+			// 通过token获取站点
+			if (pathname === '/api/sites/token' && request.method === 'GET') {
+				// 验证token
+				const authHeader = request.headers.get('Authorization');
+				if (!authHeader || !authHeader.startsWith('Bearer ')) {
+					return new Response(JSON.stringify({ error: 'Missing or invalid Authorization header' }), {
+						status: 401,
+						headers: { 'Content-Type': 'application/json' },
+					});
+				}
+				const token = authHeader.substring(7);
+				
+				try {
+					const { results } = await env.DB.prepare(
+						`SELECT s.*, COUNT(r.id) as review_count 
+						 FROM sites s 
+						 LEFT JOIN reviews r ON s.suid = r.suid 
+						 WHERE s.token = ?
+						 GROUP BY s.id, s.suid, s.token, s.name, s.url, s.icon, s.status, s.created_at, s.updated_at
+						 ORDER BY s.created_at DESC`
+					)
+						.bind(token)
+						.all<Site & { review_count: number }>();
+					
+					return new Response(JSON.stringify(results), {
+						headers: { 'Content-Type': 'application/json' },
+					});
+				} catch (e: any) {
+					return new Response(JSON.stringify({ error: e.message }), {
+						status: 500,
+						headers: { 'Content-Type': 'application/json' },
+					});
+				}
+			}
+			
+			// 通过token获取评论
+			if (pathname === '/api/reviews/token' && request.method === 'GET') {
+				// 验证token
+				const authHeader = request.headers.get('Authorization');
+				if (!authHeader || !authHeader.startsWith('Bearer ')) {
+					return new Response(JSON.stringify({ error: 'Missing or invalid Authorization header' }), {
+						status: 401,
+						headers: { 'Content-Type': 'application/json' },
+					});
+				}
+				const token = authHeader.substring(7);
+				
+				try {
+					const { results } = await env.DB.prepare(
+						'SELECT * FROM reviews WHERE token = ? ORDER BY created_at DESC'
+					)
+						.bind(token)
+						.all<Review>();
+					
+					return new Response(JSON.stringify(results), {
+						headers: { 'Content-Type': 'application/json' },
+					});
+				} catch (e: any) {
+					return new Response(JSON.stringify({ error: e.message }), {
+						status: 500,
+						headers: { 'Content-Type': 'application/json' },
+					});
+				}
+			}
+			
 			// 获取所有站点（包括已删除的）- 用于管理页面
 			if (pathname === '/api/sites/all' && request.method === 'GET') {
 				try {
@@ -132,23 +199,15 @@ export default {
 				}
 			}
 			
-			// 通过ID获取单个站点 - 用于更新操作
+			// 通过SUID获取单个站点
 			if (pathname.startsWith('/api/sites/') && request.method === 'GET') {
-				const idStr = pathname.substring(11); // 移除 '/api/sites/' 前缀
-				const id = parseInt(idStr);
+				const suid = pathname.substring(11); // 移除 '/api/sites/' 前缀
 				
-				if (isNaN(id)) {
-					return new Response(JSON.stringify({ error: 'Invalid site ID' }), {
-						status: 400,
-						headers: { 'Content-Type': 'application/json' },
-					});
-				}
-
 				try {
 					const site = await env.DB.prepare(
-						'SELECT * FROM sites WHERE id = ?'
+						'SELECT * FROM sites WHERE suid = ?'
 					)
-						.bind(id)
+						.bind(suid)
 						.first<Site>();
 					
 					if (site) {
@@ -169,17 +228,9 @@ export default {
 				}
 			}
 			
-			// 更新站点通过ID
+			// 更新站点通过SUID
 			if (pathname.startsWith('/api/sites/') && request.method === 'PUT') {
-				const idStr = pathname.substring(11); // 移除 '/api/sites/' 前缀
-				const id = parseInt(idStr);
-				
-				if (isNaN(id)) {
-					return new Response(JSON.stringify({ error: 'Invalid site ID' }), {
-						status: 400,
-						headers: { 'Content-Type': 'application/json' },
-					});
-				}
+				const suid = pathname.substring(11); // 移除 '/api/sites/' 前缀
 				
 				// 验证token
 				const authHeader = request.headers.get('Authorization');
@@ -196,9 +247,9 @@ export default {
 					
 					// 检查站点是否存在且属于该token
 					const site = await env.DB.prepare(
-						'SELECT id FROM sites WHERE id = ? AND token = ?'
+						'SELECT id FROM sites WHERE suid = ? AND token = ?'
 					)
-						.bind(id, token)
+						.bind(suid, token)
 						.first();
 					
 					if (!site) {
@@ -209,16 +260,16 @@ export default {
 					}
 					
 					const result = await env.DB.prepare(
-						'UPDATE sites SET suid = ?, token = ?, name = ?, url = ?, icon = ?, status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
+						'UPDATE sites SET name = ?, url = ?, icon = ?, status = ?, updated_at = CURRENT_TIMESTAMP WHERE suid = ?'
 					)
-						.bind(body.suid, body.token, body.name, body.url, body.icon || null, body.status, id)
+						.bind(body.name, body.url, body.icon || null, body.status, suid)
 						.run();
 					
 					if (result.success) {
 						const updatedSite = await env.DB.prepare(
-							'SELECT * FROM sites WHERE id = ?'
+							'SELECT * FROM sites WHERE suid = ?'
 						)
-							.bind(id)
+							.bind(suid)
 							.first<Site>();
 						
 						return new Response(JSON.stringify(updatedSite), {
@@ -321,8 +372,9 @@ export default {
 				try {
 					const body = await request.json() as Partial<Site>;
 					
-					// 生成suid
-					const suid = crypto.randomUUID();
+					// 生成suid，使用参考代码中的格式：navo- + 7位随机小写字母和数字
+					const genNavoId = (len = 7) => 'navo-' + customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', len)();
+					const suid = genNavoId(7);
 					
 					const result = await env.DB.prepare(
 						'INSERT INTO sites (suid, token, name, url, icon) VALUES (?, ?, ?, ?, ?)'
