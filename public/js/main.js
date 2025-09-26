@@ -79,10 +79,19 @@ let placeholderTimer;
 // 渲染站点卡片
 function renderSites(sites) {
     const siteGrid = document.getElementById('siteGrid');
+    if (!siteGrid) {
+        console.error('无法找到 siteGrid 元素');
+        return;
+    }
     siteGrid.innerHTML = '';
     
     // 获取Mustache模板
-    const template = document.getElementById('site-card-template').innerHTML;
+    const templateElement = document.getElementById('site-card-template');
+    if (!templateElement) {
+        console.error('无法找到 site-card-template 元素');
+        return;
+    }
+    const template = templateElement.innerHTML;
     
     sites.forEach(site => {
         // 初始化当前站点的评论索引为随机索引
@@ -549,59 +558,64 @@ function setupTopToolbar() {
 
 // 初始化页面
 document.addEventListener('DOMContentLoaded', async function() {
-    // 获取所有数据
-    await fetchAllData();
-    
-    // 渲染所有站点
-    renderSites(sitesData);
-    
-    // 设置快捷搜索
-    setupQuickSearch();
-    
-    // 设置重置按钮
-    setupResetButton();
-    
-    // 设置顶栏工具
-    setupTopToolbar();
-    
-    // 启动动态占位符动画
-    animatePlaceholder();
-    
-    // 搜索功能
-    const searchInput = document.getElementById('searchInput');
-    const searchBtn = document.getElementById('searchBtn');
-    
-    if (searchBtn) {
-        searchBtn.addEventListener('click', function() {
-            const keyword = searchInput.value.trim();
-            const filteredSites = searchSites(keyword);
-            renderSites(filteredSites);
-        });
-    }
-    
-    if (searchInput) {
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
+    // 只有在主页(index.html)才获取和渲染站点数据
+    // 通过检查是否存在siteGrid元素来判断是否为主页
+    const siteGrid = document.getElementById('siteGrid');
+    if (siteGrid) {
+        // 获取所有数据
+        await fetchAllData();
+        
+        // 渲染所有站点
+        renderSites(sitesData);
+        
+        // 设置快捷搜索
+        setupQuickSearch();
+        
+        // 设置重置按钮
+        setupResetButton();
+        
+        // 设置顶栏工具
+        setupTopToolbar();
+        
+        // 启动动态占位符动画
+        animatePlaceholder();
+        
+        // 搜索功能
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        
+        if (searchBtn) {
+            searchBtn.addEventListener('click', function() {
                 const keyword = searchInput.value.trim();
                 const filteredSites = searchSites(keyword);
                 renderSites(filteredSites);
+            });
+        }
+        
+        if (searchInput) {
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const keyword = searchInput.value.trim();
+                    const filteredSites = searchSites(keyword);
+                    renderSites(filteredSites);
+                }
+            });
+        }
+        
+        // 点击模态框外部关闭模态框
+        window.onclick = function(event) {
+            const detailModal = document.getElementById('detailModal');
+            const commentModal = document.getElementById('commentModal');
+            
+            if (detailModal && event.target === detailModal) {
+                closeModal('detailModal');
             }
-        });
+            
+            if (commentModal && event.target === commentModal) {
+                closeModal('commentModal');
+            }
+        };
     }
-    
-    // 点击模态框外部关闭模态框
-    window.onclick = function(event) {
-        const detailModal = document.getElementById('detailModal');
-        const commentModal = document.getElementById('commentModal');
-        
-        if (detailModal && event.target === detailModal) {
-            closeModal('detailModal');
-        }
-        
-        if (commentModal && event.target === commentModal) {
-            closeModal('commentModal');
-        }
-    };
 });
 
 // 复制文本到剪贴板
