@@ -204,11 +204,21 @@
                 <h2 class="section-title">API 测试</h2>
                 <div class="form-group">
                     <label for="apiEndpoint">API 端点:</label>
+                    <select id="apiEndpointSelect" onchange="updateEndpoint()">
+                        <option value="">自定义端点</option>
+                        <option value="/api/sites">获取所有活跃站点 (GET /api/sites)</option>
+                        <option value="/api/sites/all">获取所有站点 (GET /api/sites/all)</option>
+                        <option value="/api/sites">添加站点 (POST /api/sites)</option>
+                        <option value="/api/reviews">获取站点评论 (GET /api/reviews)</option>
+                        <option value="/api/reviews/all">获取所有评论 (GET /api/reviews/all)</option>
+                        <option value="/api/reviews">添加评论 (POST /api/reviews)</option>
+                        <option value="/api/update/url">批量更新URL (POST /api/update/url)</option>
+                    </select>
                     <input type="text" id="apiEndpoint" placeholder="/api/sites">
                 </div>
                 <div class="form-group">
                     <label for="apiMethod">请求方法:</label>
-                    <select id="apiMethod">
+                    <select id="apiMethod" onchange="updateMethod()">
                         <option value="GET">GET</option>
                         <option value="POST">POST</option>
                         <option value="PUT">PUT</option>
@@ -228,6 +238,13 @@
                     <label for="apiResponse">响应:</label>
                     <textarea id="apiResponse" rows="10" readonly></textarea>
                 </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">常用测试模板</h2>
+                <button class="btn" onclick="loadTemplate('batchUpdateUrl')">批量更新URL模板</button>
+                <button class="btn" onclick="loadTemplate('createSite')">创建站点模板</button>
+                <button class="btn" onclick="loadTemplate('createReview')">创建评论模板</button>
             </div>
         </div>
 
@@ -646,6 +663,83 @@
                 .catch(error => {
                     document.getElementById('apiResponse').value = '请求失败: ' + error.message;
                 });
+        }
+        
+        // 更新端点
+        function updateEndpoint() {
+            const select = document.getElementById('apiEndpointSelect');
+            const input = document.getElementById('apiEndpoint');
+            if (select.value) {
+                const endpoint = select.value;
+                if (endpoint.includes('(GET')) {
+                    document.getElementById('apiMethod').value = 'GET';
+                } else if (endpoint.includes('(POST')) {
+                    document.getElementById('apiMethod').value = 'POST';
+                } else if (endpoint.includes('(PUT')) {
+                    document.getElementById('apiMethod').value = 'PUT';
+                } else if (endpoint.includes('(DELETE')) {
+                    document.getElementById('apiMethod').value = 'DELETE';
+                }
+                input.value = endpoint.split(' ')[0]; // 提取实际端点路径
+            }
+        }
+        
+        // 更新方法
+        function updateMethod() {
+            // 当手动更改方法时，清除端点选择
+            document.getElementById('apiEndpointSelect').value = '';
+        }
+        
+        // 加载测试模板
+        function loadTemplate(template) {
+            const devToken = document.getElementById('devToken').value || 'your-token-here';
+            
+            switch (template) {
+                case 'batchUpdateUrl':
+                    document.getElementById('apiEndpoint').value = '/api/update/url';
+                    document.getElementById('apiMethod').value = 'POST';
+                    document.getElementById('apiHeaders').value = JSON.stringify({
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${devToken}`
+                    }, null, 2);
+                    document.getElementById('apiBody').value = JSON.stringify([
+                        {
+                            "suid": "navo-xxxxxx",
+                            "url": "https://example.com"
+                        }
+                    ], null, 2);
+                    break;
+                    
+                case 'createSite':
+                    document.getElementById('apiEndpoint').value = '/api/sites';
+                    document.getElementById('apiMethod').value = 'POST';
+                    document.getElementById('apiHeaders').value = JSON.stringify({
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${devToken}`
+                    }, null, 2);
+                    document.getElementById('apiBody').value = JSON.stringify({
+                        "name": "示例网站",
+                        "url": "https://example.com",
+                        "icon": "https://example.com/favicon.ico"
+                    }, null, 2);
+                    break;
+                    
+                case 'createReview':
+                    document.getElementById('apiEndpoint').value = '/api/reviews';
+                    document.getElementById('apiMethod').value = 'POST';
+                    document.getElementById('apiHeaders').value = JSON.stringify({
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${devToken}`
+                    }, null, 2);
+                    document.getElementById('apiBody').value = JSON.stringify({
+                        "suid": "navo-xxxxxx",
+                        "content": "这是一个示例评论"
+                    }, null, 2);
+                    break;
+            }
+            
+            // 更新端点选择器
+            document.getElementById('apiEndpointSelect').value = '';
         }
         
         // 保存设置

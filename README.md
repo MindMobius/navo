@@ -55,28 +55,31 @@ https://your-domain.com/api/update/url
 - 请求方法：POST
 - 请求头：
 ```
-Authorization: Bearer [YOUR_TOKEN]
+{
+  "Content-Type": "application/json",
+  "Authorization": "Bearer navo-token"
+}
 ```
 - 请求体：
 ```
 [
   {
-    "suid": "site-uid-1",
+    "suid": "nano-suid1",
     "url": "#{ipAddr}"
   },
   {
-    "suid": "site-uid-2",
+    "suid": "nano-suid2",
     "url": "https://emby.your-domain.com:#{port}"
   },
   {
-    "suid": "site-uid-3",
+    "suid": "nano-suid3",
     "url": "https://openlist.your-domain.com:#{port}"
   }
 ]
 ```
-- 接口调用成功包含的字符串:
+- 接口调用成功返回的字符串:
 ```
-"success"
+{"message":"success"}
 ```
 
 ## 部署指南

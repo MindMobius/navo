@@ -684,24 +684,66 @@ export default {
 				try {
 					const body = await request.json() as UpdateUrlRequest[];
 					
-					// 批量更新
-					const statements = body.map(item => 
-						env.DB.prepare('UPDATE sites SET url = ? WHERE suid = ? AND token = ?')
-							.bind(item.url, item.suid, token)
-					);
+					// 存储每个更新操作的结果
+					const updateResults: { suid: string; success: boolean; error?: string }[] = [];
 					
-					const results = await env.DB.batch(statements);
+					// 逐个处理更新操作
+					for (const item of body) {
+						try {
+							// 检查站点是否存在
+							const site = await env.DB.prepare(
+								'SELECT id FROM sites WHERE suid = ?'
+							)
+							.bind(item.suid)
+							.first<{ id: number }>();
+							
+							if (!site) {
+								updateResults.push({
+									suid: item.suid,
+									success: false,
+									error: 'Site not found'
+								});
+								continue;
+							}
+							
+							// 尝试更新站点URL和updated_at字段
+							const result = await env.DB.prepare(
+								'UPDATE sites SET url = ?, updated_at = CURRENT_TIMESTAMP WHERE suid = ? AND token = ?'
+							)
+							.bind(item.url, item.suid, token)
+							.run();
+							
+							if (result.success) {
+								updateResults.push({
+									suid: item.suid,
+									success: true
+								});
+							} else {
+								updateResults.push({
+									suid: item.suid,
+									success: false,
+									error: 'Failed to update site'
+								});
+							}
+						} catch (e: any) {
+							updateResults.push({
+								suid: item.suid,
+								success: false,
+								error: e.message
+							});
+						}
+					}
 					
 					// 检查是否所有更新都成功
-					const allSuccess = results.every(result => result.success);
+					const allSuccess = updateResults.every(result => result.success);
 					
 					if (allSuccess) {
 						return new Response(JSON.stringify({ message: 'success' }), {
 							headers: { 'Content-Type': 'application/json' },
 						});
 					} else {
-						return new Response(JSON.stringify({ error: 'Failed to update some sites' }), {
-							status: 500,
+						return new Response(JSON.stringify(updateResults), {
+							status: 200, // 即使有些失败也返回200状态码，因为这是预期的行为
 							headers: { 'Content-Type': 'application/json' },
 						});
 					}
