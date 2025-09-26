@@ -63,7 +63,10 @@
         <script id="site-card-template" type="text/template">
             <div class="site-card-info">
                 <div class="site-card-name" title="{{name}}">
-                    <img src="{{siteIcon}}" alt="{{name}}" class="site-icon" onerror="this.style.display='none'">
+                    <div class="site-icon-container">
+                        <i data-feather="globe" class="default-icon"></i>
+                        <img src="{{siteIcon}}" alt="{{name}}" class="site-icon" onerror="this.style.display='none'">
+                    </div>
                     {{truncatedName}}
                 </div>
                 <a class="site-card-url" href="{{url}}" target="_blank" title="{{url}}">
@@ -136,6 +139,7 @@
                     <button class="close" onclick="closeModal('commentModal')">&times;</button>
                 </div>
                 <div class="modal-body">
+                    {{#hasApiKey}}
                     <form id="commentForm">
                         <div class="form-group">
                             <label for="commentContent">评论内容</label>
@@ -145,6 +149,13 @@
                             <button type="submit" class="btn-primary">提交评论</button>
                         </div>
                     </form>
+                    {{/hasApiKey}}
+                    {{^hasApiKey}}
+                    <div class="no-api-key-message">
+                        <p>添加评论需要先设置API密钥。</p>
+                        <button id="goToKeyAuth" class="btn-primary">前往密钥认证页面</button>
+                    </div>
+                    {{/hasApiKey}}
                     <div class="site-reviews-list">
                         <h3>评论内容</h3>
                         {{#hasReviews}}

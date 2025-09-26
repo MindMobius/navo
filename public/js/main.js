@@ -97,9 +97,9 @@ function renderSites(sites) {
         const currentReviewIndex = site.reviews.length > 0 ? siteReviewIndices[site.id] || 0 : 0;
         const currentReview = site.reviews.length > 0 ? site.reviews[currentReviewIndex] : { content: "暂无评论" };
         
-        // 获取网站图标（这里使用网站URL的favicon）
+        // 获取网站域名并构造favicon.im URL
         const siteUrl = new URL(site.url);
-        const siteIcon = `https://www.google.com/s2/favicons?domain=${siteUrl.hostname}`;
+        const siteIcon = `https://favicon.im/${siteUrl.hostname}`;
         
         // 截断长文本
         const truncateText = (text, maxLength) => {
@@ -229,6 +229,9 @@ function showCommentModal(siteId) {
     // 获取评论模态框模板
     const template = document.getElementById('comment-modal-template').innerHTML;
     
+    // 检查是否有API密钥
+    const hasApiKey = !!localStorage.getItem('navo_api_key');
+    
     // 准备评论数据
     const reviews = site.reviews.map(review => ({
         content: renderMarkdown(review.content),
@@ -237,9 +240,10 @@ function showCommentModal(siteId) {
     
     // 准备模板数据
     const templateData = {
-        name: site.name,
+        name: site.name.length > 20 ? site.name.substring(0, 20) + '...' : site.name,
         hasReviews: site.reviews.length > 0,
-        reviews: reviews
+        reviews: reviews,
+        hasApiKey: hasApiKey
     };
     
     // 使用Mustache模板渲染
@@ -249,53 +253,64 @@ function showCommentModal(siteId) {
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
     
-    // 绑定表单提交事件
-    document.getElementById('commentForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const content = document.getElementById('commentContent').value;
-        
-        if (content) {
-            try {
-                // 获取API密钥
-                const apiKey = localStorage.getItem('navo_api_key');
-                
-                // 发送评论到服务器
-                const response = await fetch('/api/reviews', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`
-                    },
-                    body: JSON.stringify({
-                        suid: site.suid,
-                        content: content
-                    })
-                });
-                
-                if (response.ok) {
-                    const newReview = await response.json();
+    // 如果有API密钥，绑定表单提交事件
+    if (hasApiKey) {
+        document.getElementById('commentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const content = document.getElementById('commentContent').value;
+            
+            if (content) {
+                try {
+                    // 获取API密钥
+                    const apiKey = localStorage.getItem('navo_api_key');
                     
-                    // 添加新评论到站点
-                    site.reviews.push(newReview);
+                    // 发送评论到服务器
+                    const response = await fetch('/api/reviews', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${apiKey}`
+                        },
+                        body: JSON.stringify({
+                            suid: site.suid,
+                            content: content
+                        })
+                    });
                     
-                    // 关闭模态框
-                    closeModal('commentModal');
-                    
-                    // 重新渲染站点卡片
-                    renderSites(sitesData);
-                    
-                    // 显示成功消息
-                    alert('评论添加成功！');
-                } else {
-                    const errorData = await response.json();
-                    alert(`评论添加失败: ${errorData.error}`);
+                    if (response.ok) {
+                        const newReview = await response.json();
+                        
+                        // 添加新评论到站点
+                        site.reviews.push(newReview);
+                        
+                        // 关闭模态框
+                        closeModal('commentModal');
+                        
+                        // 重新渲染站点卡片
+                        renderSites(sitesData);
+                        
+                        // 显示成功消息
+                        alert('评论添加成功！');
+                    } else {
+                        const errorData = await response.json();
+                        alert(`评论添加失败: ${errorData.error}`);
+                    }
+                } catch (error) {
+                    console.error('添加评论时出错:', error);
+                    alert('评论添加失败，请稍后重试');
                 }
-            } catch (error) {
-                console.error('添加评论时出错:', error);
-                alert('评论添加失败，请稍后重试');
             }
+        });
+    } else {
+        // 如果没有API密钥，绑定跳转按钮事件
+        const goToKeyAuthBtn = document.getElementById('goToKeyAuth');
+        if (goToKeyAuthBtn) {
+            goToKeyAuthBtn.addEventListener('click', function() {
+                closeModal('commentModal');
+                window.location.href = '/key-auth.html';
+            });
         }
-    });
+    }
     
     // 重新渲染feather图标
     feather.replace();

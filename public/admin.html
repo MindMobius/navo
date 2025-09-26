@@ -510,8 +510,33 @@
             
             // 检查密钥格式: navo- + 46个小写字母，总共51个字符
             if (!apiKey || !/^navo-[a-z]{46}$/.test(apiKey)) {
-                alert('未检测到有效的API密钥，请先配置密钥');
-                window.location.href = '/key-auth.html';
+                // 创建提示说明元素
+                const noKeyMessage = document.createElement('div');
+                noKeyMessage.className = 'no-api-key-message';
+                noKeyMessage.innerHTML = `
+                    <div class="no-api-key-content">
+                        <h3>需要API密钥才能访问管理中心</h3>
+                        <p>Navo采用无用户系统设计</p>
+                        <p>通过您创建的API密钥来识别和授权数据访问权限</p>
+                        <p>所有数据操作都需要对应的Navo密钥才能执行</p>
+                        <p>请前往密钥管理页面生成并设置您的Navo密钥</p>
+                        <button id="goToKeyAuth" class="btn btn-primary">前往设置密钥</button>
+                    </div>
+                `;
+                
+                // 查找并替换主要内容
+                const mainContent = document.querySelector('.main-content .container');
+                if (mainContent) {
+                    // 清空内容并添加提示
+                    mainContent.innerHTML = '';
+                    mainContent.appendChild(noKeyMessage);
+                    
+                    // 添加跳转按钮事件
+                    document.getElementById('goToKeyAuth').addEventListener('click', function() {
+                        window.location.href = '/key-auth.html';
+                    });
+                }
+                
                 return false;
             }
             

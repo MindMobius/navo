@@ -1,38 +1,7 @@
 // Admin模块
 const Admin = (function() {
     // 站点数据示例（实际项目中会从API获取）
-    let sites = [
-        {
-            id: 1,
-            url: "https://www.remove.bg",
-            reviews: [
-                {
-                    user: "张三",
-                    content: "一个非常好用的在线抠图工具，能快速移除图片背景，支持透明背景下载。"
-                },
-                {
-                    user: "李四",
-                    content: "处理效果很棒，特别是对于头发丝的处理很自然，比其他免费工具好用多了。"
-                }
-            ],
-            tags: ["图片处理", "设计"],
-            status: "public",
-            createdAt: "2025-09-01"
-        },
-        {
-            id: 2,
-            url: "https://github.com",
-            reviews: [
-                {
-                    user: "王五",
-                    content: "全球最大的代码托管平台，支持Git版本控制，可以托管代码、管理项目。"
-                }
-            ],
-            tags: ["开发", "代码托管"],
-            status: "public",
-            createdAt: "2025-08-20"
-        }
-    ];
+    let sites = [];
 
     // DOM元素缓存
     const elements = {
