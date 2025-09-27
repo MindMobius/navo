@@ -147,9 +147,19 @@ function renderSites(sites) {
 function sortSites(sites, sortOrder) {
     switch (sortOrder) {
         case 'updated_at_desc':
-            return sites.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+            return sites.sort((a, b) => {
+                // 获取站点的最新更新时间（包括评论）
+                const aLatestUpdate = getLatestUpdateTime(a);
+                const bLatestUpdate = getLatestUpdateTime(b);
+                return new Date(bLatestUpdate) - new Date(aLatestUpdate);
+            });
         case 'updated_at_asc':
-            return sites.sort((a, b) => new Date(a.updated_at) - new Date(b.updated_at));
+            return sites.sort((a, b) => {
+                // 获取站点的最新更新时间（包括评论）
+                const aLatestUpdate = getLatestUpdateTime(a);
+                const bLatestUpdate = getLatestUpdateTime(b);
+                return new Date(aLatestUpdate) - new Date(bLatestUpdate);
+            });
         case 'id_asc':
             return sites.sort((a, b) => a.id - b.id);
         case 'id_desc':
@@ -161,6 +171,24 @@ function sortSites(sites, sortOrder) {
         default:
             return sites;
     }
+}
+
+// 获取站点的最新更新时间（包括评论）
+function getLatestUpdateTime(site) {
+    // 站点本身的更新时间
+    let latestTime = new Date(site.updated_at);
+    
+    // 检查是否有评论，并找出最新的评论时间
+    if (site.reviews && site.reviews.length > 0) {
+        for (const review of site.reviews) {
+            const reviewTime = new Date(review.updated_at || review.created_at);
+            if (reviewTime > latestTime) {
+                latestTime = reviewTime;
+            }
+        }
+    }
+    
+    return latestTime;
 }
 
 // 显示站点详情
