@@ -1,5 +1,6 @@
 // 从API获取站点数据而不是使用示例数据
 let sitesData = [];
+let currentSortOrder = 'updated_at_desc'; // 默认排序方式
 
 // 获取站点数据
 async function fetchSites() {
@@ -93,7 +94,10 @@ function renderSites(sites) {
     }
     const template = templateElement.innerHTML;
     
-    sites.forEach(site => {
+    // 对站点进行排序
+    const sortedSites = sortSites([...sites], currentSortOrder);
+    
+    sortedSites.forEach(site => {
         // 初始化当前站点的评论索引为随机索引
         if (siteReviewIndices[site.id] === undefined && site.reviews.length > 0) {
             siteReviewIndices[site.id] = Math.floor(Math.random() * site.reviews.length);
@@ -127,7 +131,7 @@ function renderSites(sites) {
             truncatedName: truncateText(site.name, 20),
             truncatedUrl: truncateText(site.url, 40),
             reviewContent: renderMarkdown(currentReview.content),
-            reviewCount: site.review_count || 0
+            reviewCount: site.reviews.length || 0
         };
         
         // 使用Mustache模板渲染
@@ -137,6 +141,26 @@ function renderSites(sites) {
     
     // 重新渲染feather图标
     feather.replace();
+}
+
+// 站点排序函数
+function sortSites(sites, sortOrder) {
+    switch (sortOrder) {
+        case 'updated_at_desc':
+            return sites.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+        case 'updated_at_asc':
+            return sites.sort((a, b) => new Date(a.updated_at) - new Date(b.updated_at));
+        case 'id_asc':
+            return sites.sort((a, b) => a.id - b.id);
+        case 'id_desc':
+            return sites.sort((a, b) => b.id - a.id);
+        case 'review_count_asc':
+            return sites.sort((a, b) => (a.reviews?.length || 0) - (b.reviews?.length || 0));
+        case 'review_count_desc':
+            return sites.sort((a, b) => (b.reviews?.length || 0) - (a.reviews?.length || 0));
+        default:
+            return sites;
+    }
 }
 
 // 显示站点详情
@@ -599,6 +623,15 @@ document.addEventListener('DOMContentLoaded', async function() {
                     const filteredSites = searchSites(keyword);
                     renderSites(filteredSites);
                 }
+            });
+        }
+        
+        // 排序功能
+        const sortSelect = document.getElementById('sortSelect');
+        if (sortSelect) {
+            sortSelect.addEventListener('change', function() {
+                currentSortOrder = this.value;
+                renderSites(sitesData);
             });
         }
         

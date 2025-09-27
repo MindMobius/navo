@@ -124,7 +124,7 @@ body {
 }
 
 .toolbar-description {
-    font-size: 12px;
+    font-size: 10px;
     color: #000000;
     margin: 0;
 }
@@ -538,6 +538,43 @@ body {
 
 .search-btn:hover {
     background-color: #1a252f;
+}
+
+/* 排序控件 */
+.sort-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 12px auto;
+    max-width: 300px;
+}
+
+.sort-label {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.sort-select {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    background-color: #fff;
+    cursor: pointer;
+    color: #2c3e50;
+    transition: all 0.2s ease;
+}
+
+.sort-select:focus {
+    outline: none;
+    border-color: #2c3e50;
+    box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.1);
+}
+
+.sort-select:hover {
+    border-color: #2c3e50;
 }
 
 /* 搜索引导 */

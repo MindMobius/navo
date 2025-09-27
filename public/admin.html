@@ -197,10 +197,6 @@
                         <input type="url" id="siteUrl" required placeholder="请输入站点URL">
                     </div>
                     <div class="form-group">
-                        <label for="siteIcon">图标URL（可选）</label>
-                        <input type="url" id="siteIcon" placeholder="请输入图标URL">
-                    </div>
-                    <div class="form-group">
                         <label for="siteStatus">状态</label>
                         <select id="siteStatus" required>
                             <option value="actived">已激活</option>
@@ -709,7 +705,6 @@
                     document.getElementById('siteId').value = site.suid;
                     document.getElementById('siteName').value = site.name;
                     document.getElementById('siteUrl').value = site.url;
-                    document.getElementById('siteIcon').value = site.icon || '';
                     document.getElementById('siteStatus').value = site.status;
                     
                     document.getElementById('siteModalTitle').textContent = '编辑站点';
@@ -880,7 +875,6 @@
             document.getElementById('siteId').value = '';
             document.getElementById('siteName').value = '';
             document.getElementById('siteUrl').value = '';
-            document.getElementById('siteIcon').value = '';
             document.getElementById('siteStatus').value = 'actived';
             
             document.getElementById('siteModal').classList.add('show');
@@ -904,7 +898,6 @@
             const suid = document.getElementById('siteId').value;
             const name = document.getElementById('siteName').value;
             const url = document.getElementById('siteUrl').value;
-            const icon = document.getElementById('siteIcon').value;
             const status = document.getElementById('siteStatus').value;
             
             try {
@@ -917,7 +910,7 @@
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${getCurrentApiKey()}`
                         },
-                        body: JSON.stringify({ name, url, icon, status })
+                        body: JSON.stringify({ name, url, status })
                     });
                 } else {
                     // 创建站点
@@ -927,7 +920,7 @@
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${getCurrentApiKey()}`
                         },
-                        body: JSON.stringify({ name, url, icon })
+                        body: JSON.stringify({ name, url })
                     });
                 }
                 

@@ -29,9 +29,20 @@
 		{
 			"binding": "DB",
 			"database_name": "navo-db",
-			"database_id": "eea762f4-a58b-45a2-87c3-707998298b13"
+			"database_id": "2d7c50ee-4f2d-4df9-a363-d4b92843e48e"
 		}
 	],
+	"env": {
+		"dev": {
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "navo-db",
+					"database_id": "eea762f4-a58b-45a2-87c3-707998298b13"
+				}
+			]
+		}
+	},
 	/**
 	 * Environment Variables
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables

@@ -57,8 +57,6 @@ const Admin = (function() {
     
     // 加载站点数据（占位符）
     function loadSites() {
-        renderSites(sites);
-        updateUserUIState();
     }
 
     // 绑定事件
@@ -81,18 +79,14 @@ const Admin = (function() {
         
         const formData = new FormData(elements.siteForm);
         const siteData = {
+            name: formData.get('siteName'),
             url: formData.get('siteUrl'),
-            reviews: [
-                {
-                    content: formData.get('siteReview')
-                }
-            ],
-            tags: formData.get('siteTags').split(',').map(tag => tag.trim()).filter(tag => tag),
             status: formData.get('siteStatus')
         };
         
         saveSite(siteData);
-        renderSites(sites);
+        // 修复：重新加载站点数据而不是使用局部变量
+        loadSites();
         
         // 重置表单并返回列表页面
         elements.siteForm.reset();
@@ -106,23 +100,18 @@ const Admin = (function() {
         const formData = new FormData(elements.editSiteForm);
         const siteData = {
             id: parseInt(formData.get('editSiteId')),
+            name: formData.get('editSiteName'),
             url: formData.get('editSiteUrl'),
-            reviews: [
-                {
-                    content: formData.get('editSiteReview')
-                }
-            ],
-            tags: formData.get('editSiteTags').split(',').map(tag => tag.trim()).filter(tag => tag),
             status: formData.get('editSiteStatus')
         };
         
         saveSite(siteData);
-        renderSites(sites);
+        // 修复：重新加载站点数据而不是使用局部变量
+        loadSites();
         
         // 返回列表页面
         switchToPage('site-management');
     }
-
 
     // 切换页面
     function switchToPage(pageName) {
@@ -173,19 +162,21 @@ const Admin = (function() {
         const card = document.createElement('div');
         card.className = 'site-card';
         
-        // 构建评价气泡HTML
+        // 构建评价气泡HTML，确保reviews属性存在
         let reviewsHtml = '';
-        site.reviews.forEach(review => {
-            reviewsHtml += `
-                <div class="review-bubble">
-                    <div class="review-content">${review.content}</div>
-                </div>
-            `;
-        });
+        if (site.reviews && Array.isArray(site.reviews)) {
+            site.reviews.forEach(review => {
+                reviewsHtml += `
+                    <div class="review-bubble">
+                        <div class="review-content">${review.content}</div>
+                    </div>
+                `;
+            });
+        }
         
-        // 构建标签HTML
+        // 构建标签HTML，确保tags属性存在
         let tagsHtml = '';
-        if (site.tags && site.tags.length > 0) {
+        if (site.tags && Array.isArray(site.tags) && site.tags.length > 0) {
             tagsHtml = `
                 <div class="site-card-tags">
                     <div class="tag-list">
@@ -246,8 +237,7 @@ const Admin = (function() {
         // 填充表单数据
         document.getElementById('editSiteId').value = site.id;
         document.getElementById('editSiteUrl').value = site.url;
-        document.getElementById('editSiteReview').value = site.reviews[0]?.content || '';
-        document.getElementById('editSiteTags').value = site.tags.join(', ');
+        // 删除对siteIcon和siteTags的引用
         document.getElementById('editSiteStatus').value = site.status;
         
         // 切换到编辑页面
@@ -280,9 +270,9 @@ const Admin = (function() {
             sites.push(newSite);
         }
         
+        renderSites(sites); // 添加这行确保保存后立即渲染
         return sites;
     }
-
 
     // 更新用户界面状态
     function updateUserUIState() {
@@ -297,10 +287,5 @@ const Admin = (function() {
     };
 })();
 
-// DOM加载完成后初始化
-document.addEventListener('DOMContentLoaded', Admin.init);
 
 // 页面加载完成后初始化
-document.addEventListener('DOMContentLoaded', function() {
-    Admin.init();
-});

@@ -44,6 +44,20 @@
                     </div>
                     <button id="searchBtn" class="search-btn">搜索</button>
                 </div>
+                
+                <!-- 排序控件 -->
+                <div class="sort-controls">
+                    <span class="sort-label">排序:</span>
+                    <select id="sortSelect" class="sort-select">
+                        <option value="updated_at_desc">更新时间 ↓</option>
+                        <option value="updated_at_asc">更新时间 ↑</option>
+                        <option value="id_asc">序号 ↑</option>
+                        <option value="id_desc">序号 ↓</option>
+                        <option value="review_count_asc">评论数量 ↑</option>
+                        <option value="review_count_desc">评论数量 ↓</option>
+                    </select>
+                </div>
+                
                 <div class="search-guide">
                     <div class="search-history" id="searchHistory">
                         <span>搜索历史：</span>

@@ -86,6 +86,22 @@ https://your-domain.com/api/update/url
 
 1. 克隆项目代码
 2. 安装依赖：`npm install`
-3. 配置 Cloudflare 环境
+3. 配置 Cloudflare 环境：`wrangler login`
+4. 创建数据库：`wrangler d1 create navo-db`
+5. 将数据库的的ID填入 wrangler.toml 文件的database_id中，注意binding名称必须为DB
+```
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "navo-db",
+			"database_id": "your-database-id"
+		}
+	],
+```
+5. 将数据表创建到数据库：`wrangler d1 execute navo-db --file=./migrations/0001_create_sites_table.sql --remote`
 4. 部署到 Cloudflare：`npm run deploy`
 
+### 本地调试
+1. 创建本体数据库  `npx wrangler d1 create navo-db --local`
+2. 将数据表创建到数据库：`npx wrangler d1 execute navo-db --file=./migrations/0001_create_sites_table.sql --local`
+3. 启动本地开发服务器：`npx wrangler dev --env dev `
